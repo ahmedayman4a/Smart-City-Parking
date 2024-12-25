@@ -62,7 +62,6 @@ smart-city-parking/
 
 ### Branching Strategy
 - **Main Branch:** `main` - Production-ready code only.
-- **Development Branch:** `dev` - Active development happens here.
 - **Feature/Hotfix Branches:** Branch names must follow the naming convention:
   `{TYPE}-lower-case-name-with-dashes-only-{INITIALS}`
   - **TYPE:**
@@ -75,11 +74,10 @@ smart-city-parking/
     - `FIX-parking-spot-bug-ME`
 
 ### Workflow
-1. Create a branch from `dev`.
+1. Create a branch from `main`.
 2. Implement changes.
-3. Open a Pull Request (PR) to merge your branch into `dev`.
+3. Open a Pull Request (PR) to merge your branch into `main`.
 4. PRs must be reviewed and approved by at least one other developer.
-5. After testing and approval, merge to `dev`. Merges to `main` are only done after staging review.
 
 ### Commit Messages
 - Use descriptive commit messages.
