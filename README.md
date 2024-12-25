@@ -69,10 +69,10 @@ smart-city-parking/
     - `FT` for Feature
     - `RF` for Refactor
     - `FIX` for Fix
-  - **INITIALS:** 2-letter initials of the developer creating the branch.
+  - **INITIALS:** 2-letter initials of the developer creating the branch (AA,EA,AM,ME).
   - **Examples:**
     - `FT-initialize-project-AA`
-    - `FIX-parking-spot-bug-JS`
+    - `FIX-parking-spot-bug-ME`
 
 ### Workflow
 1. Create a branch from `dev`.
