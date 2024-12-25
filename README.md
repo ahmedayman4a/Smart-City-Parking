@@ -98,6 +98,8 @@ smart-city-parking/
 ### Running Locally
 1. **Backend Setup**
    - Navigate to the `backend/` directory
+   - Copy `src/main/resources/templates/env.properties.template` to `src/main/resources/env.properties`
+   - Set the `DB_URL`, `DB_USERNAME`, and `DB_PASSWORD` variables in `src/main/resources/env.properties` according to your development environment
    - Run `mvn clean install` to install dependencies
    - Run `mvn spring-boot:run` to start the application
 
