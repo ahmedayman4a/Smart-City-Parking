@@ -6,12 +6,10 @@ import java.time.LocalDateTime;
 
 @Data
 public class Reservation {
-
-
     private int id;
     private int userId;
     private int spotId;
-    private int amount;
+    private double amount;
     private String paymentMethod;
     private LocalDateTime start;
     private LocalDateTime end;
