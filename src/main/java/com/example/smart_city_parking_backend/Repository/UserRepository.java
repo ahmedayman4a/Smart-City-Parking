@@ -1,42 +1,117 @@
 package com.example.smart_city_parking_backend.Repository;
 
+import com.example.smart_city_parking_backend.DTO.UserDTO;
 import com.example.smart_city_parking_backend.Entity.User;
+import com.example.smart_city_parking_backend.Enum.Role;
+import com.example.smart_city_parking_backend.Enum.Status;
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
+@RequiredArgsConstructor
 public class UserRepository {
 
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
     private User user;
 
     public int save(User user) {
 
-        String sql = "INSERT INTO user (username, password, email, role, phone) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO user (username, password, email, role, phone, age, createdAt, birthDate, status, firstName, lastName) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         return jdbcTemplate.update(
                 sql, user.getUsername()
                 , user.getPassword()
                 , user.getEmail()
                 , user.getRole()
-                , user.getPhone());
+                , user.getPhone()
+                , user.getAge()
+                , user.getCreatedAt()
+                , user.getDateOfBirth()
+                , user.getStatus()
+                , user.getFirstName()
+                , user.getLastName()
+        );
 
     }
 
     public List<User> findAll() {
-        String sql = "SELECT * FROM user";
+        String sql = "SELECT * FROM User"; // SQL table name is case-sensitive in some databases
+
         return jdbcTemplate.query(
                 sql,
-                (rs, rowNum) -> {
-                    User user = new User();
-                    user.setId(rs.getInt("id"));
-                    user.setUsername(rs.getString("username"));
-                    user.setPassword(rs.getString("password"));
-                    user.setEmail(rs.getString("email"));
-                    user.setRole(rs.getString("role"));
-                    user.setPhone(rs.getString("phone"));
-                    return user;
-                });
+                (rs, rowNum) -> User.builder()
+                        .id(rs.getInt("user_id")) // Match column name in the schema
+                        .username(rs.getString("username"))
+                        .password(rs.getString("password"))
+                        .email(rs.getString("email"))
+                        .role(Role.valueOf(rs.getString("role"))) // Enum conversion
+                        .phone(rs.getString("phone"))
+                        .age(rs.getInt("age")) // Age field should exist in User class
+                        .createdAt(rs.getTimestamp("created_at").toLocalDateTime()) // Correct column name and conversion
+                        .dateOfBirth(rs.getDate("date_of_birth").toLocalDate()) // Correct column name
+                        .status(Status.valueOf(rs.getString("status")))
+                        .firstName(rs.getString("first_name")) // Correct column name
+                        .lastName(rs.getString("last_name")) // Correct column name
+                        .build()
+        );
     }
+
+
+//    public Optional<User> findByUsername(String username) {
+//        String sql = "SELECT * FROM user WHERE username = ?";
+//        try {
+//            User user = jdbcTemplate.queryForObject(sql, new Object[]{username}, (rs, rowNum) -> {
+//                User u = User.builder()
+//                        .id(rs.getInt("user_id"))
+//                        .username(rs.getString("username"))
+//                        .password(rs.getString("password"))
+//                        .email(rs.getString("email"))
+//                        .role(Role.valueOf(rs.getString("role")))
+//                        .phone(rs.getString("phone"))
+//                        .age(rs.getInt("age"))
+//                        .createdAt(rs.getTimestamp("created_at").toLocalDateTime())
+//                        .dateOfBirth(rs.getDate("date_of_birth").toLocalDate())
+//                        .status(Status.valueOf(rs.getString("status")))
+//                        .firstName(rs.getString("first_name"))
+//                        .lastName(rs.getString("last_name"))
+//                        .build();
+//                return u;
+//            });
+//            return Optional.of(user);
+//        } catch (Exception e) {
+//            return Optional.empty();
+//        }
+//    }
+
+    public Optional<User> findByEmail(String email) {
+        String sql = "SELECT * FROM user WHERE LOWER(email) = LOWER(?)";
+        try {
+            return Optional.of(
+                    jdbcTemplate.queryForObject(sql, new Object[]{email.trim()}, (rs, rowNum) ->
+                            User.builder()
+                                    .id(rs.getInt("user_id"))
+                                    .username(rs.getString("username"))
+                                    .password(rs.getString("password"))
+                                    .email(rs.getString("email"))
+                                    .role(rs.getString("role") != null ? Role.valueOf(rs.getString("role")) : null)
+                                    .phone(rs.getString("phone"))
+                                    .age(rs.getObject("age") != null ? rs.getInt("age") : 0)
+                                    .createdAt(rs.getTimestamp("created_at") != null ? rs.getTimestamp("created_at").toLocalDateTime() : null)
+                                    .dateOfBirth(rs.getDate("date_of_birth") != null ? rs.getDate("date_of_birth").toLocalDate() : null)
+                                    .status(Status.valueOf(rs.getString("status").toUpperCase()))
+                                    .firstName(rs.getString("first_name"))
+                                    .lastName(rs.getString("last_name"))
+                                    .build()
+                    )
+            );
+        } catch (Exception e) {
+            System.err.println("Error executing query: " + sql + " with email: " + email);
+            e.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
 }

@@ -12,6 +12,8 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class Driver extends User{
 
-
+    private String licensePlateNumber;
+    private String carModel;
+    private String carColor;
 
 }
