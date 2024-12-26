@@ -1,6 +1,7 @@
 package com.example.smart_city_parking_backend.Controller;
 
 
+import com.example.smart_city_parking_backend.DTO.AuthenticationResponse;
 import com.example.smart_city_parking_backend.DTO.LoginRequestDto;
 import com.example.smart_city_parking_backend.DTO.UserDTO;
 import com.example.smart_city_parking_backend.Service.LoginService;
@@ -20,36 +21,38 @@ public class SignUpController {
     private final SignUpService signUpService;
     private final LoginService loginService;
     @PostMapping("/signUp/driver")
-    public ResponseEntity<Object> DriverSignUp(@RequestBody UserDTO request) {
+    public ResponseEntity<Object> driverSignUp(@RequestBody UserDTO request) {
         System.out.println("request = " + request);
         return signUpService.driverSignUp(request);
     }
-//
-//    @PostMapping("/register/doctor")
-//    public ResponseEntity<Object> ParkingManagerSignUp(@RequestBody UserDTO request) {
-//
-//        return signUpService.doctorSignUp(request);
-//    }
-//
+
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody LoginRequestDto request) {
         return loginService.login(request);
     }
 
+    @PostMapping("/signUp/parkingOwner")
+    public ResponseEntity<Object> parkingManagerSignUp(@RequestBody UserDTO request) {
+        System.out.println("request = " + request);
+        return signUpService.parkingManagerSignUp(request);
+    }
 
 
-    // if the user is logged in and its token is expired,
-    // this endpoint will be called to refresh the token
-//    @GetMapping("/refresh-token")
-//    public ResponseEntity<Object> refreshToken(@RequestBody AuthenticationResponse token) {
-//        System.out.println(token);
-//        return authenticateService.refreshToken(token.getRefreshToken());
-//    }
 
-//    @PostMapping("/register/admin")
-//    public ResponseEntity<Object> registerAdmin(@RequestBody ClinicAdminDTO request) {
-//        return signUpService.adminSignUp(request);
-//    }
+    @PostMapping("/signUp/admin")
+    public ResponseEntity<Object> adminSignUp(@RequestBody UserDTO request) {
+        return signUpService.adminSignUp(request);
+    }
+
+
+//
+//     if the user is logged in and its token is expired,
+//     this endpoint will be called to refresh the token
+    @GetMapping("/refresh-token")
+    public ResponseEntity<Object> refreshToken(@RequestBody AuthenticationResponse token) {
+        System.out.println(token);
+        return signUpService.refreshToken(token);
+    }
 
 
 }

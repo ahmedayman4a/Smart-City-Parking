@@ -38,20 +38,37 @@ public class LoginService {
             Map<String, Object> claims = Map.of("role", user.getRole().toString(),
                     "email", user.getEmail(),
                     "username", user.getUsername()
-            )
-                    ;
+            );
             var token = jwtService.generateToken(claims, user);
             return ResponseEntity.ok(ResponseDTO.builder().data(token).message("Login successful").statusCode(200).success(true).build());
 
         } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(ResponseDTO.builder()
-                        .data(null).
-                        message("Login failed")
-                        .statusCode(401)
-                        .success(false)
-                        .build());
-
+            if (e.getMessage().equals("User not found")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(ResponseDTO.builder()
+                                .data(null).
+                                message("User not found")
+                                .statusCode(404)
+                                .success(false)
+                                .build());
+            } else if (e.getMessage().equals("Bad credentials")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(ResponseDTO.builder()
+                                .data(null).
+                                message("Login failed")
+                                .statusCode(401)
+                                .success(false)
+                                .build());
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(ResponseDTO.builder()
+                                .data(null).
+                                message("Login failed")
+                                .statusCode(400)
+                                .success(false)
+                                .build());
+            }
         }
     }
+
 }

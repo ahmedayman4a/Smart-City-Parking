@@ -52,6 +52,10 @@ public class JwtService {
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
+    public String extractEmailToken(String token) {
+        return extractClaim(token, claims -> claims.get("email", String.class));
+    }
+
     private static final String GOOGLE_JWKS_URL = "https://www.googleapis.com/oauth2/v3/certs";
 
     public String extractEmail(String token) throws Exception {
