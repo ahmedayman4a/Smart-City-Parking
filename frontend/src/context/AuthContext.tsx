@@ -1,51 +1,49 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode'; // Correct import for named export
+import { jwtDecode } from 'jwt-decode';
 import Cookies from 'js-cookie';
 
 interface User {
   id: string;
   name: string;
   email: string;
-  role: 'user' | 'DOCTOR';
+  role: 'Driver' | 'Admin' | 'ParkingManager';
 }
+
 interface GoogleUser {
   email: string;
   name: string;
   sub: string;
 }
 
-
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (username: string, password: string) => void;
+  login: (email: string, password: string) => void;
   logout: () => void;
+  error: string;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [error, setError] = useState<string>('');
   const navigate = useNavigate();
 
-  // Rehydrate user on page reload
   useEffect(() => {
     const token = Cookies.get('authToken');
     if (token) {
       try {
         const decodedToken: any = jwtDecode(token);
-
-        // Check if the token is expired
-        const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+        const currentTime = Math.floor(Date.now() / 1000);
         if (decodedToken.exp && decodedToken.exp < currentTime) {
           console.warn('Token has expired');
           logout();
           return;
         }
 
-        // Rehydrate user state
         const user: User = {
           id: decodedToken.sub || decodedToken.userId,
           name: decodedToken.name || decodedToken.aud,
@@ -53,10 +51,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           role: decodedToken.role,
         };
         setUser(user);
-
-        // Set token in axios headers
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        navigate(user.role === 'DOCTOR' ? '/admin/dashboard' : '/dashboard');
+        navigate(user.role === 'ParkingManager' ? '/admin/dashboard' : '/dashboard');
       } catch (error) {
         console.error('Token decoding error:', error);
         logout();
@@ -64,16 +60,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Login function
-  const login = async (username: string, password: string) => {
+  const login = async (email: string, password: string) => {
     try {
-      const response = await axios.post('http://localhost:8080/api/authenticate/login', { username, password });
+      setError('');
+      console.log('Logging in...');
+      const response = await axios.post('http://localhost:8080/api/authenticate/login', { email, password });
 
-      const token = response.data.data; // Adjust if token is nested
-      console.log('Token:', token);
-
+      const token = response.data.data;
       const decodedToken: any = jwtDecode(token);
-      console.log('Decoded Token:', decodedToken);
 
       const user: User = {
         id: decodedToken.sub || decodedToken.userId,
@@ -82,49 +76,59 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         role: decodedToken.role,
       };
 
-      // Save token in cookies and axios headers
-      Cookies.set('authToken', token, { expires: 7 }); // Token expires in 7 days
+      Cookies.set('authToken', token, { expires: 7 });
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
-      console.log('User:', user);
       setUser(user);
-
-      // Navigate to appropriate dashboard
-      navigate(user.role === 'DOCTOR' ? '/admin/dashboard' : '/dashboard');
-    } catch (error) {
+      navigate(user.role === 'ParkingManager' ? '/admin/dashboard' : '/dashboard');
+    } catch (error: any) {
       console.error('Login Error:', error);
-      alert('Invalid credentials');
+      if (error.response?.status === 404) {
+        setError('Email not found');
+      } else if (error.response?.status === 401) {
+        setError('password is incorrect');
+
+      }else if (error.response?.status === 400) {
+        setError('Account is not activated');
+      } 
+      else {
+        setError('Something went wrong. Please try again.');
+      }
     }
   };
+
   const loginWithGoogle = (googleUser: GoogleUser) => {
     const newUser: User = {
       id: googleUser.sub,
       name: googleUser.name,
       email: googleUser.email,
-      role: 'user',
-    
+      role: 'Driver',
     };
     
     setUser(newUser);
     navigate('/dashboard');
   };
 
-  // Logout function
   const logout = () => {
     setUser(null);
+    setError('');
     Cookies.remove('authToken');
     delete axios.defaults.headers.common['Authorization'];
     navigate('/login');
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      isAuthenticated: !!user, 
+      login, 
+      logout,
+      error 
+    }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
-// Custom hook to use AuthContext
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
