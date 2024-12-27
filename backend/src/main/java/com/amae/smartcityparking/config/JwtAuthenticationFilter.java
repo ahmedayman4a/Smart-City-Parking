@@ -1,4 +1,4 @@
-package com.amae.smartcityparking.Config;
+package com.amae.smartcityparking.config;
 import com.amae.smartcityparking.Service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

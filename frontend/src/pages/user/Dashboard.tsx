@@ -4,6 +4,7 @@ import UserDashboardLayout from '../../components/dashboard/UserDashboardLayout'
 import ActiveReservations from '../../components/dashboard/ActiveReservations';
 import ParkingFinder from '../../components/dashboard/ParkingFinder';
 
+
 export default function UserDashboard() {
   const { user } = useAuth();
 
