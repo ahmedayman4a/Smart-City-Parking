@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
   LayoutDashboard,
@@ -25,6 +25,16 @@ const navigation = [
 export default function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleNavigation = (href: string) => {
+    navigate(href);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -39,14 +49,16 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
             <div className="mt-5 flex-1 flex flex-col">
               <nav className="flex-1 px-2 space-y-1">
                 {navigation.map((item) => (
-                  <a
+                  <button
                     key={item.name}
-                    href={item.href}
-                    className="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-white hover:bg-blue-700"
+                    onClick={() => handleNavigation(item.href)}
+                    className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md w-full text-white ${
+                      location.pathname === item.href ? 'bg-blue-700' : 'hover:bg-blue-700'
+                    }`}
                   >
                     <item.icon className="mr-3 h-6 w-6" />
                     {item.name}
-                  </a>
+                  </button>
                 ))}
               </nav>
             </div>
@@ -61,7 +73,7 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
                 </div>
               </div>
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="mt-4 w-full flex items-center px-2 py-2 text-sm font-medium rounded-md text-white hover:bg-blue-700"
               >
                 <LogOut className="mr-3 h-6 w-6" />
