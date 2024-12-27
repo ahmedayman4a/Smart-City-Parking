@@ -25,6 +25,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, String> handleGenericException(Exception ex) {
-        return Map.of("error", "An unexpected error occurred.");
+        return Map.of("error", ex.getMessage());
     }
 }
