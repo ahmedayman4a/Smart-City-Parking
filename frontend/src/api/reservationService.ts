@@ -11,17 +11,7 @@ interface ReserveSpotResponse {
   data: any;
 }
 
-export const reserveSpot = async (spotId: string): Promise<ReservationDTO> => {
-  console.log('spotId', spotId);
-  return new ReservationDTO({
-    id: '1',
-    spotId: '1',
-    location: '123 Main St',
-    startTime: new Date(),
-    endTime: new Date(),
-    status: 'reserved',
-    totalPrice: 10.00
-  });
-  // const response: ReserveSpotResponse = await apiClient.post('/reservations', spotId);
-  // return new ReservationDTO(response.data);
-};
+export const reserveSpot = async (ReservationRequest: any): Promise<ReservationDTO> => {
+  const response: ReserveSpotResponse = await apiClient.post('/reservation/reserve', ReservationRequest);
+  return new ReservationDTO(response.data);
+}
