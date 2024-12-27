@@ -52,7 +52,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         };
         setUser(user);
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        navigate(user.role === 'ParkingManager' ? '/admin/dashboard' : '/dashboard');
+        console.log('User:', user);
+        console.log('Role:', user.role);
+        switch (user.role) {
+          case 'Admin':
+            navigate('/admin/dashboard');
+            break;
+          case 'ParkingManager':
+            navigate('/manager/dashboard');
+            break;
+          default:
+            navigate('/dashboard');
+        }
       } catch (error) {
         console.error('Token decoding error:', error);
         logout();
@@ -79,7 +90,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       Cookies.set('authToken', token, { expires: 7 });
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       setUser(user);
-      navigate(user.role === 'ParkingManager' ? '/admin/dashboard' : '/dashboard');
+      switch (user.role) {
+        case 'Admin':
+          navigate('/admin/dashboard');
+          break;
+        case 'ParkingManager':
+          navigate('/manager/dashboard');
+          break;
+        default:
+          navigate('/dashboard');
+      }
+
     } catch (error: any) {
       console.error('Login Error:', error);
       if (error.response?.status === 404) {

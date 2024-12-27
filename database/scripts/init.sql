@@ -10,3 +10,5 @@ source driver.sql
 source parking_lot.sql
 source parking_spot.sql
 source parking_sensor.sql
+source admin.sql
+source parking_manager.sql

@@ -4,25 +4,23 @@ import { useAuth } from '../../context/AuthContext';
 import {
   LayoutDashboard,
   ParkingCircle,
-  Users,
+  Clock,
   Settings,
   Bell,
   LogOut,
   User,
-  BarChart3,
-  FileText
+  BarChart3
 } from 'lucide-react';
 
 const navigation = [
-  { name: 'Dashboard', icon: LayoutDashboard, href: '/admin/dashboard' },
-  { name: 'Parking Spots', icon: ParkingCircle, href: '/admin/parking-spots' },
-  { name: 'Users', icon: Users, href: '/admin/users' },
-  { name: 'Reports', icon: FileText, href: '/admin/reports' },
-  { name: 'Analytics', icon: BarChart3, href: '/admin/analytics' },
-  { name: 'Settings', icon: Settings, href: '/admin/settings' },
+  { name: 'Dashboard', icon: LayoutDashboard, href: '/manager/dashboard' },
+  { name: 'Parking Lot', icon: ParkingCircle, href: '/manager/lot' },
+  { name: 'Reservations', icon: Clock, href: '/manager/reservations' },
+  { name: 'Analytics', icon: BarChart3, href: '/manager/analytics' },
+  { name: 'Settings', icon: Settings, href: '/manager/settings' },
 ];
 
-export default function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
+export default function ManagerDashboardLayout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -44,7 +42,7 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
           <div className="flex flex-col flex-grow pt-5 bg-blue-800 overflow-y-auto">
             <div className="flex items-center flex-shrink-0 px-4">
               <ParkingCircle className="h-8 w-8 text-white" />
-              <span className="ml-2 text-xl font-bold text-white">ParkWise Admin</span>
+              <span className="ml-2 text-xl font-bold text-white">ParkWise Manager</span>
             </div>
             <div className="mt-5 flex-1 flex flex-col">
               <nav className="flex-1 px-2 space-y-1">
@@ -69,7 +67,7 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
                 </div>
                 <div className="ml-3">
                   <p className="text-sm font-medium text-white">{user?.name}</p>
-                  <p className="text-xs text-blue-200">Administrator</p>
+                  <p className="text-xs text-blue-200">Parking Manager</p>
                 </div>
               </div>
               <button

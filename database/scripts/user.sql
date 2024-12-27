@@ -12,5 +12,7 @@ CREATE TABLE User (
     password VARCHAR(255),
     role ENUM('Driver', 'Admin', 'ParkingManager'),
     date_of_birth DATE,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+     age INT,
+    status ENUM('Active', 'Inactive') DEFAULT 'Active'
 );
