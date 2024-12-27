@@ -1,10 +1,14 @@
 package com.amae.smartcityparking.Repository;
 
+import com.amae.smartcityparking.DTO.ParkingLotDTO;
 import com.amae.smartcityparking.Entity.ParkingLot;
+import com.amae.smartcityparking.Enum.ParkingLotType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
+import java.util.Optional;
 
 @Repository
 public class ParkingLotRepository {
@@ -16,20 +20,60 @@ public class ParkingLotRepository {
     }
 
     public void saveParkingLot(ParkingLot parkingLot) {
-        String sql = "INSERT INTO ParkingLot (lot_id, owner_id, address, park_name, start_price, rate_per_hour, total_slots, penalty, latitude, longitude, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO parking_lot (owner_id, name, address, longitude, latitude, start_price, rate_per_hour, penalty, total_spaces, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(connection -> {
             PreparedStatement stmt = connection.prepareStatement(sql);
-            stmt.setInt(1, parkingLot.getId());
-            stmt.setInt(2, parkingLot.getOwnerId());
+            stmt.setInt(1, parkingLot.getOwnerId());
+            stmt.setString(2, parkingLot.getName());
             stmt.setString(3, parkingLot.getAddress());
-            stmt.setString(4, parkingLot.getName());
+            stmt.setBigDecimal(4, new BigDecimal(parkingLot.getLongitude().toString()));
+            stmt.setBigDecimal(5, new BigDecimal(parkingLot.getLatitude().toString()));
+            stmt.setInt(6, parkingLot.getStartPrice());
+            stmt.setInt(7, parkingLot.getRatePerHour());
+            stmt.setInt(8, parkingLot.getPenalty());
+            stmt.setInt(9, parkingLot.getTotalSpaces());
+            stmt.setString(10, parkingLot.getType().name().toUpperCase());
+            return stmt;
+        });
+    }
+
+    public Optional<ParkingLot> getParkingLotById(int id) {
+        String sql = "SELECT * FROM parking_lot WHERE id = ?";
+        return jdbcTemplate.query(sql, new Object[]{id}, rs -> {
+            if (rs.next()) {
+                return Optional.of(ParkingLot.builder()
+                        .id(rs.getInt("id"))
+                        .ownerId(rs.getInt("owner_id"))
+                        .name(rs.getString("name"))
+                        .address(rs.getString("address"))
+                        .longitude(rs.getBigDecimal("longitude"))
+                        .latitude(rs.getBigDecimal("latitude"))
+                        .startPrice(rs.getInt("start_price"))
+                        .ratePerHour(rs.getInt("rate_per_hour"))
+                        .penalty(rs.getInt("penalty"))
+                        .totalSpaces(rs.getInt("total_spaces"))
+                        .type(ParkingLotType.fromString(rs.getString("type")))
+                        .build());
+            } else {
+                return Optional.empty();
+            }
+        });
+    }
+
+    public void update(ParkingLot parkingLot) {
+        String sql = "UPDATE parking_lot SET name = ?, address = ?, longitude = ?, latitude = ?, start_price = ?, rate_per_hour = ?, penalty = ?, total_spaces = ?, type = ? WHERE id = ?";
+        jdbcTemplate.update(connection -> {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, parkingLot.getName());
+            stmt.setString(2, parkingLot.getAddress());
+            stmt.setBigDecimal(3, new BigDecimal(parkingLot.getLongitude().toString()));
+            stmt.setBigDecimal(4, new BigDecimal(parkingLot.getLatitude().toString()));
             stmt.setInt(5, parkingLot.getStartPrice());
             stmt.setInt(6, parkingLot.getRatePerHour());
-            stmt.setInt(7, parkingLot.getTotalSpaces());
-            stmt.setInt(8, parkingLot.getPenalty());
-            stmt.setBigDecimal(9, parkingLot.getLatitude());
-            stmt.setBigDecimal(10, parkingLot.getLongitude());
-            stmt.setString(11, parkingLot.getType().name().toLowerCase());
+            stmt.setInt(7, parkingLot.getPenalty());
+            stmt.setInt(8, parkingLot.getTotalSpaces());
+            stmt.setString(9, parkingLot.getType().name().toUpperCase());
+            stmt.setInt(10, parkingLot.getId());
             return stmt;
         });
     }

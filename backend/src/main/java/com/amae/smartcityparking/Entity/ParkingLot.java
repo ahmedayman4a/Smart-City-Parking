@@ -11,16 +11,16 @@ import java.time.LocalDate;
 @SuperBuilder
 public class ParkingLot {
     private int id;
+    private int ownerId;
     private String name;
     private String address;
-    private int ownerId;
+    private BigDecimal longitude;
+    private BigDecimal latitude;
     private int startPrice;
     private int ratePerHour;
     private int penalty;
     private int totalSpaces;
     private int currentOccupancy;
-    private BigDecimal latitude;
-    private BigDecimal longitude;
     private ParkingLotType type;
     private LocalDate createdAt;
     private LocalDate updatedAt;
