@@ -5,6 +5,8 @@ import com.amae.smartcityparking.dtos.responses.ReservationResponseDTO;
 import com.amae.smartcityparking.models.Reservation;
 import com.amae.smartcityparking.services.ReservationService;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -26,9 +28,9 @@ public class ReservationController {
     }
 
     @PostMapping("/")
-    public Reservation store(@RequestBody ReservationRequestDTO requestDTO) {
+    public Reservation store(@RequestBody ReservationRequestDTO requestDTO, @AuthenticationPrincipal UserDetails userDetails) {
         Reservation reservation = new Reservation();
-        reservation.setUserId(requestDTO.getUserId());
+        // reservation.setUserId(userDetails.getUsername());
         reservation.setSpotId(requestDTO.getSpotId());
         reservation.setAmount(requestDTO.getAmount());
         reservation.setPaymentMethod(requestDTO.getPaymentMethod());

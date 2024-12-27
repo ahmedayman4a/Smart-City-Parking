@@ -1,4 +1,4 @@
-package com.amae.smartcityparking.Config;
+package com.amae.smartcityparking.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity // to enable the method security such as @PreAuthorize
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final com.amae.smartcityparking.Config.JwtAuthenticationFilter jwtAuthFilter;
+    private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
 
 

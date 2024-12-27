@@ -10,6 +10,7 @@ import ManagerDashboard from './pages/manager/Dashboard';
 import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './components/auth/PrivateRoute';
 import ReservationHistoryPage from './pages/user/ReservationHistory';
+
 function App() {
   return (
     <AuthProvider>
@@ -17,17 +18,30 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup/driver" element={<DriverSignup />} />
         <Route path="/signup/manager" element={<ManagerSignup />} />
-        
+
         {/* User Routes */}
-        <Route path="/dashboard" element={<PrivateRoute><UserDashboard /></PrivateRoute>} />
-        <Route path="/reservations" element={<PrivateRoute><UserReservations /></PrivateRoute>} />
+        <Route
+          path="/dashboard"
+          element={<PrivateRoute redirectPath="/dashboard"><UserDashboard /></PrivateRoute>}
+        />
+        <Route
+          path="/reservations"
+          element={<PrivateRoute redirectPath="/reservations"><ReservationHistoryPage /></PrivateRoute>}
+        />
 
         {/* Admin Routes */}
-        <Route path="/admin/*" element={<PrivateRoute><AdminDashboard /></PrivateRoute>} />
+        <Route
+          path="/admin/*"
+          element={<PrivateRoute requiredRole="Admin" redirectPath="/admin/dashboard"><AdminDashboard /></PrivateRoute>}
+        />
 
         {/* Manager Routes */}
-        <Route path="/manager/*" element={<PrivateRoute><ManagerDashboard /></PrivateRoute>} />
-        
+        <Route
+          path="/manager/*"
+          element={<PrivateRoute requiredRole="ParkingManager" redirectPath="/manager/dashboard"><ManagerDashboard /></PrivateRoute>}
+        />
+
+        {/* Default Route */}
         <Route path="/" element={<Navigate to="/login" />} />
       </Routes>
     </AuthProvider>

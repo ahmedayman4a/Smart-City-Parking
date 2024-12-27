@@ -1,4 +1,4 @@
-package com.amae.smartcityparking.Config;
+package com.amae.smartcityparking.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

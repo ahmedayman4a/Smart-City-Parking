@@ -1,9 +1,10 @@
 package com.amae.smartcityparking.services;
 
+import com.amae.smartcityparking.Enum.Role;
 import com.amae.smartcityparking.models.Reservation;
-import com.amae.smartcityparking.models.User;
+import com.amae.smartcityparking.Entity.User;
 import com.amae.smartcityparking.repositories.ReservationRepository;
-import com.amae.smartcityparking.repositories.UserRepository;
+import com.amae.smartcityparking.Repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -48,8 +49,9 @@ public class ReservationService {
     }
 
     public double priceCalculator(Reservation reservation) {
-        ParkingLot parkingLot = parkingLotRepository.findBySpotId(reservation.getSpotId());
-        int pricePerHour = parkingLot.getPrice();
+//        ParkingLot parkingLot = parkingLotRepository.findBySpotId(reservation.getSpotId());
+//        int pricePerHour = parkingLot.getPrice();
+        int pricePerHour = 10;
         double hours = (Duration.between(reservation.getStart(), reservation.getEnd()).toMinutes()) / 60.0;
 
         int peakStartHour = 8;
@@ -77,7 +79,11 @@ public class ReservationService {
     }
 
     public List<Reservation> getUserReservations(int userId) {
-        User user = UserRepository.findById(userId);
+        User user = User.builder().id(1).role(Role.Admin).build();
+            //        User user = new User();
+//        user.setId(1);
+//        user.setRole("ADMIN");
+//        User user = UserRepository.findById(userId);
         if(user == null) {
             throw new IllegalArgumentException("User not found.");
         }
