@@ -23,6 +23,10 @@ public class ParkingSpotService {
         this.parkingLotRepository = parkingLotRepository;
     }
 
+    public List<ParkingSpot> getAvailableSpots(int lotId, LocalDateTime start, LocalDateTime end) {
+        return parkingSpotRepository.findByLotIdAndTime(lotId, start, end);
+    }
+
 
     public ParkingSpot createEntityObject(ParkingSpotDTO dto, int userId) {
         return ParkingSpot.builder()

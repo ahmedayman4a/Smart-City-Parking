@@ -13,6 +13,8 @@ import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public class ParkingSpotRepository {
@@ -66,4 +68,32 @@ public class ParkingSpotRepository {
         });
         return parkingSpot;
     }
+    
+public List<ParkingSpot> findByLotIdAndTime(int lotId, LocalDateTime start, LocalDateTime end) {
+    String sql = """
+                SELECT * 
+                FROM parking_spot ps
+                WHERE ps.parking_lot_id = ?
+                  AND NOT EXISTS (
+                    SELECT 1
+                    FROM reservation r
+                    WHERE r.spot_id = ps.id
+                        AND ( (? BETWEEN r.start AND r.end)
+                            OR (? BETWEEN r.start AND r.end)
+                            OR (r.start BETWEEN ? AND ?)
+                            OR (r.end BETWEEN ? AND ?)
+                        )
+                  )
+                """;
+    return jdbcTemplate.query(
+            sql,
+            (rs, rowNum) -> ParkingSpot.builder()
+                    .id(rs.getInt("id"))
+                    .lotId(rs.getInt("parking_lot_id"))
+                    .spotNumber(rs.getInt("spot_number"))
+                    .build(),
+            lotId, start, end, start, end, start, end
+    );
+}
+
 }

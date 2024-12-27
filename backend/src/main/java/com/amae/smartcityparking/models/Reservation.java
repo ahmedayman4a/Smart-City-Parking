@@ -1,10 +1,12 @@
 package com.amae.smartcityparking.models;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 public class Reservation {
     private int id;
     private int userId;
@@ -14,4 +16,5 @@ public class Reservation {
     private LocalDateTime start;
     private LocalDateTime end;
     private String status;
+
 }
