@@ -1,11 +1,15 @@
 package com.amae.smartcityparking.services;
 
+import com.amae.smartcityparking.Entity.ParkingSpot;
 import com.amae.smartcityparking.Enum.Role;
+import com.amae.smartcityparking.Service.ParkingSpotService;
+import com.amae.smartcityparking.dtos.responses.ReservationResponseDTO;
 import com.amae.smartcityparking.models.Reservation;
 import com.amae.smartcityparking.Entity.User;
 import com.amae.smartcityparking.repositories.ReservationRepository;
-import com.amae.smartcityparking.Repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,34 +20,47 @@ import java.util.Objects;
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
-        public ReservationService(ReservationRepository reservationRepository) {
+    private final ParkingSpotService parkingSpotService;
+    public ReservationService(ReservationRepository reservationRepository, ParkingSpotService parkingSpotService) {
         this.reservationRepository = reservationRepository;
+        this.parkingSpotService = parkingSpotService;
     }
 
-    public List<Reservation> getAll() {
+    public List<ReservationResponseDTO> getAll() {
         return reservationRepository.findAll();
     }
 
-    public List<Reservation> getAvailableSpots() {
-        return null;
-    }
 
-    public Reservation reserveSpot(Reservation reservation){
-        // TODO: Depend on the parking slot component
-//        boolean isValidSpot = parkingSlotRepository.isSpotAvailable(reservation.getSpotId());
-        boolean isValidSpot = true;
-        if(!isValidSpot) {
-            throw new IllegalArgumentException("Invalid or non-existent parking spot.");
+    @Transactional
+    public Reservation reserveSpot(Reservation reservation, User user) {
+        // Fetch available spots
+        List<ParkingSpot> availableSpots = parkingSpotService.getAvailableSpots(
+            reservation.getSpotId(),
+            reservation.getStart(),
+            reservation.getEnd()
+        );
+
+        if (availableSpots.isEmpty()) {
+            throw new IllegalStateException("No available parking spots for the selected time range.");
         }
 
-        boolean isAlreadyReserved = reservationRepository.isSpotReserved(reservation.getSpotId(), reservation.getStart(), reservation.getEnd());
+        ParkingSpot spot = availableSpots.getFirst(); // Get the first available spot
 
-        if(isAlreadyReserved) {
-            throw new IllegalArgumentException("Parking spot is already reserved.");
+        boolean isReserved = reservationRepository.existsBySpotIdAndTimeRange(
+            spot.getId(),
+            reservation.getStart(),
+            reservation.getEnd()
+        );
+        if (isReserved) {
+            throw new IllegalStateException("Spot is no longer available.");
         }
 
         double amount = priceCalculator(reservation);
+
         reservation.setAmount(amount);
+        reservation.setUserId(user.getId());
+        reservation.setSpotId(spot.getId());
+        reservation.setStatus("PENDING");
 
         return reservationRepository.save(reservation);
     }
@@ -78,24 +95,19 @@ public class ReservationService {
         return null;
     }
 
-    public List<Reservation> getUserReservations(int userId) {
-        User user = User.builder().id(1).role(Role.Admin).build();
-            //        User user = new User();
-//        user.setId(1);
-//        user.setRole("ADMIN");
-//        User user = UserRepository.findById(userId);
+    public List<ReservationResponseDTO> getUserReservations(User user) {
         if(user == null) {
             throw new IllegalArgumentException("User not found.");
         }
 
-        if(Objects.equals(user.getRole(), "ADMIN")) {
+        if(Objects.equals(user.getRole(), Role.Admin)){
             return reservationRepository.findAll();
         }
 
-        if(Objects.equals(user.getRole(), "MANAGER")) {
-            return reservationRepository.findByManagerId(userId);
+        if(Objects.equals(user.getRole(), Role.ParkingManager)){
+            return reservationRepository.findByManagerId(user.getId());
         }
 
-        return reservationRepository.findByUserId(userId);
+        return reservationRepository.findByUserId(user.getId());
     }
 }
