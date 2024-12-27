@@ -7,7 +7,7 @@ import UserDashboard from './pages/user/Dashboard';
 import AdminDashboard from './pages/admin/Dashboard';
 import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './components/auth/PrivateRoute';
-
+import ReservationHistoryPage from './pages/user/ReservationHistory';
 function App() {
   return (
     <AuthProvider>
@@ -23,6 +23,16 @@ function App() {
             </PrivateRoute>
           }
         />
+
+        <Route 
+          path="/reservations"
+          element={
+            <PrivateRoute>
+              <ReservationHistoryPage/>
+            </PrivateRoute>
+          }
+        />
+
         <Route
           path="/admin/dashboard"
           element={
