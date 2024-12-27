@@ -1,0 +1,21 @@
+DROP TABLE IF EXISTS reservation;
+
+CREATE TABLE reservation (
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNSIGNED NOT NULL,
+    spot_id BIGINT NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    payment_method VARCHAR(50) NOT NULL,
+    start DATETIME NOT NULL,
+    end DATETIME NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX (user_id),
+    INDEX (spot_id),
+    INDEX (start),
+    INDEX (end),
+    CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,
+    CONSTRAINT fk_spot FOREIGN KEY (spot_id) REFERENCES parking_spot(id) ON DELETE CASCADE
+);
+

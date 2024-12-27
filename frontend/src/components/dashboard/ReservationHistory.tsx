@@ -19,6 +19,87 @@ const mockReservationHistory = [
     endTime: '2024-03-10T16:00:00',
     status: 'cancelled',
     totalPrice: 12.00
+  },
+  {
+    id: '2',
+    spotId: 'B3',
+    location: 'Central Mall Parking',
+    startTime: '2024-03-10T14:00:00',
+    endTime: '2024-03-10T16:00:00',
+    status: 'cancelled',
+    totalPrice: 12.00
+  },
+  {
+    id: '2',
+    spotId: 'B3',
+    location: 'Central Mall Parking',
+    startTime: '2024-03-10T14:00:00',
+    endTime: '2024-03-10T16:00:00',
+    status: 'cancelled',
+    totalPrice: 12.00
+  },
+  {
+    id: '2',
+    spotId: 'B3',
+    location: 'Central Mall Parking',
+    startTime: '2024-03-10T14:00:00',
+    endTime: '2024-03-10T16:00:00',
+    status: 'cancelled',
+    totalPrice: 12.00
+  },
+  {
+    id: '2',
+    spotId: 'B3',
+    location: 'Central Mall Parking',
+    startTime: '2024-03-10T14:00:00',
+    endTime: '2024-03-10T16:00:00',
+    status: 'cancelled',
+    totalPrice: 12.00
+  },
+  {
+    id: '2',
+    spotId: 'B3',
+    location: 'Central Mall Parking',
+    startTime: '2024-03-10T14:00:00',
+    endTime: '2024-03-10T16:00:00',
+    status: 'cancelled',
+    totalPrice: 12.00
+  },
+  {
+    id: '2',
+    spotId: 'B3',
+    location: 'Central Mall Parking',
+    startTime: '2024-03-10T14:00:00',
+    endTime: '2024-03-10T16:00:00',
+    status: 'cancelled',
+    totalPrice: 12.00
+  },
+  {
+    id: '2',
+    spotId: 'B3',
+    location: 'Central Mall Parking',
+    startTime: '2024-03-10T14:00:00',
+    endTime: '2024-03-10T16:00:00',
+    status: 'cancelled',
+    totalPrice: 12.00
+  },
+  {
+    id: '2',
+    spotId: 'B3',
+    location: 'Central Mall Parking',
+    startTime: '2024-03-10T14:00:00',
+    endTime: '2024-03-10T16:00:00',
+    status: 'cancelled',
+    totalPrice: 12.00
+  },
+  {
+    id: '2',
+    spotId: 'B3',
+    location: 'Central Mall Parking',
+    startTime: '2024-03-10T14:00:00',
+    endTime: '2024-03-10T16:00:00',
+    status: 'cancelled',
+    totalPrice: 12.00
   }
 ];
 

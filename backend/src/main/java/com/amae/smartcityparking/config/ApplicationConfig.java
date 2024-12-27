@@ -1,4 +1,4 @@
-package com.amae.smartcityparking.Config;
+package com.amae.smartcityparking.config;
 
 import com.amae.smartcityparking.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;

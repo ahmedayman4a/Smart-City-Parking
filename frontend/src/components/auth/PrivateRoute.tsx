@@ -5,24 +5,26 @@ import { useAuth } from '../../context/AuthContext';
 interface PrivateRouteProps {
   children: React.ReactNode;
   requiredRole?: 'Driver' | 'Admin' | 'ParkingManager';
+  redirectPath?: string; // New prop for dynamic redirection
 }
 
-export default function PrivateRoute({ children, requiredRole }: PrivateRouteProps) {
+export default function PrivateRoute({ children, requiredRole, redirectPath = '/dashboard' }: PrivateRouteProps) {
   const { isAuthenticated, user } = useAuth();
 
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
 
+  console.log('Redirect Path:', redirectPath);
   if (requiredRole && user?.role !== requiredRole) {
-    // Redirect to appropriate dashboard based on role
+    // Redirect based on the role or fallback to the given redirectPath
     switch (user?.role) {
       case 'Admin':
-        return <Navigate to="/admin/dashboard" />;
+        return <Navigate to={redirectPath} />;
       case 'ParkingManager':
-        return <Navigate to="/manager/dashboard" />;
+        return <Navigate to={redirectPath} />;
       default:
-        return <Navigate to="/dashboard" />;
+        return <Navigate to={redirectPath} />;
     }
   }
 
