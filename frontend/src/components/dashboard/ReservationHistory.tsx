@@ -1,5 +1,6 @@
 import React from 'react';
 import { Calendar, Clock, MapPin, CheckCircle, XCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const mockReservationHistory = [
   {
@@ -104,6 +105,12 @@ const mockReservationHistory = [
 ];
 
 export default function ReservationHistory() {
+  const navigate = useNavigate();
+
+  const handleReservationClick = (reservationId: string) => {
+    navigate(`/reservation-details/${reservationId}`);
+  };
+
   return (
     <div className="bg-white shadow rounded-lg">
       <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
@@ -112,7 +119,11 @@ export default function ReservationHistory() {
       </div>
       <div className="divide-y divide-gray-200">
         {mockReservationHistory.map((reservation) => (
-          <div key={reservation.id} className="p-4 hover:bg-gray-50">
+          <div 
+            key={reservation.id} 
+            className="p-4 hover:bg-gray-50 cursor-pointer transition-colors duration-200"
+            onClick={() => handleReservationClick(reservation.id)}
+          >
             <div className="flex justify-between items-start">
               <div className="flex flex-col">
                 <div className="flex items-center">
