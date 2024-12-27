@@ -38,7 +38,7 @@ public class ParkingManagerRepository {
         // Get the generated user_id
         Integer userId = keyHolder.getKey().intValue();
         // Insert into Driver table
-        String insertParkingManagaerSQL = "INSERT INTO parkingmanager (manager_id) VALUES (?)";
+        String insertParkingManagaerSQL = "INSERT INTO ParkingManager (manager_id) VALUES (?)";
         jdbcTemplate.update(insertParkingManagaerSQL, userId);
     }
 
