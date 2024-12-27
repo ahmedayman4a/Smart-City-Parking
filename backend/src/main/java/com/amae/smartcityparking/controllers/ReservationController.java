@@ -1,5 +1,6 @@
 package com.amae.smartcityparking.controllers;
 
+import com.amae.smartcityparking.Entity.User;
 import com.amae.smartcityparking.dtos.requests.ReservationRequestDTO;
 import com.amae.smartcityparking.dtos.responses.ReservationResponseDTO;
 import com.amae.smartcityparking.models.Reservation;
@@ -21,34 +22,20 @@ public class ReservationController {
         this.reservationService = reservationService;
     }
 
+    @GetMapping("/all")
+    public List<ReservationResponseDTO> all() {
+        return reservationService.getAll();
+    }
+
+
     @GetMapping("/")
-    public List<ReservationResponseDTO> index() {
-        List<Reservation> reservations = reservationService.getUserReservations(1);
-        return ReservationResponseDTO.from(reservations);
+    public List<ReservationResponseDTO> allReservations(@AuthenticationPrincipal UserDetails userDetails) {
+        return reservationService.getUserReservations((User) userDetails);
     }
 
-    @PostMapping("/")
-    public Reservation store(@RequestBody ReservationRequestDTO requestDTO, @AuthenticationPrincipal UserDetails userDetails) {
-        Reservation reservation = new Reservation();
-        // reservation.setUserId(userDetails.getUsername());
-        reservation.setSpotId(requestDTO.getSpotId());
-        reservation.setAmount(requestDTO.getAmount());
-        reservation.setPaymentMethod(requestDTO.getPaymentMethod());
-        reservation.setStart(LocalDateTime.parse(requestDTO.getStart()));
-        reservation.setEnd(LocalDateTime.parse(requestDTO.getEnd()));
-        reservation.setStatus("PENDING"); // Default status
-
-        reservationService.reserveSpot(reservation);
-
-        return reservation;
+    @PostMapping("/reserve")
+    public Reservation reserve(@RequestBody ReservationRequestDTO requestDTO, @AuthenticationPrincipal UserDetails userDetails) {
+        return reservationService.reserveSpot(requestDTO, (User) userDetails);
     }
 
-//    @PutMapping("/{id}")
-//    public String update(@PathVariable int id, @RequestBody ReservationRequestDTO requestDTO) {
-//        Reservation reservation = new Reservation();
-//        reservation.setId(id);
-//
-//        reservationService.updateReservation(requestDTO);
-//        return "Reservation updated";
-//    }
 }
