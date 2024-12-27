@@ -12,3 +12,4 @@ source database/scripts/parking_spot.sql
 source database/scripts/parking_sensor.sql
 source database/scripts/admin.sql
 source database/scripts/parking_manager.sql
+source database/scripts/reservation.sql
