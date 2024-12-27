@@ -12,6 +12,6 @@ public class ReservationRequestDTO {
     private int lotId;
 //    private double amount;
     private String paymentMethod;
-    private String start;
-    private String end;
+    private LocalDateTime start;
+    private LocalDateTime end;
 }

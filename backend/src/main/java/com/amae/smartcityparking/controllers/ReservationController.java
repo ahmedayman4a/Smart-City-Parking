@@ -35,14 +35,7 @@ public class ReservationController {
 
     @PostMapping("/reserve")
     public Reservation reserve(@RequestBody ReservationRequestDTO requestDTO, @AuthenticationPrincipal UserDetails userDetails) {
-        Reservation reservation = Reservation.builder()
-                        .spotId(requestDTO.getLotId())
-                        .start(LocalDateTime.parse(requestDTO.getStart()))
-                        .end(LocalDateTime.parse(requestDTO.getEnd()))
-                        .paymentMethod(requestDTO.getPaymentMethod())
-                        .build();
-        reservationService.reserveSpot(reservation, (User) userDetails);
-        return reservation;
+        return reservationService.reserveSpot(requestDTO, (User) userDetails);
     }
 
 }

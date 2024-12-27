@@ -3,7 +3,10 @@ package com.amae.smartcityparking.services;
 import com.amae.smartcityparking.Entity.ParkingSpot;
 import com.amae.smartcityparking.Enum.Role;
 import com.amae.smartcityparking.Service.ParkingSpotService;
+import com.amae.smartcityparking.dtos.requests.ReservationRequestDTO;
 import com.amae.smartcityparking.dtos.responses.ReservationResponseDTO;
+import com.amae.smartcityparking.exception.NoAvailableSpotsException;
+import com.amae.smartcityparking.exception.SpotNotAvailableException;
 import com.amae.smartcityparking.models.Reservation;
 import com.amae.smartcityparking.Entity.User;
 import com.amae.smartcityparking.repositories.ReservationRepository;
@@ -32,28 +35,35 @@ public class ReservationService {
 
 
     @Transactional
-    public Reservation reserveSpot(Reservation reservation, User user) {
+    public Reservation reserveSpot(ReservationRequestDTO requestDTO, User user) {
         // Fetch available spots
         List<ParkingSpot> availableSpots = parkingSpotService.getAvailableSpots(
-            reservation.getSpotId(),
-            reservation.getStart(),
-            reservation.getEnd()
+            requestDTO.getLotId(),
+            requestDTO.getStart(),
+            requestDTO.getEnd()
         );
 
         if (availableSpots.isEmpty()) {
-            throw new IllegalStateException("No available parking spots for the selected time range.");
+            throw new NoAvailableSpotsException("No available parking spots for the selected time range.");
         }
 
         ParkingSpot spot = availableSpots.getFirst(); // Get the first available spot
 
         boolean isReserved = reservationRepository.existsBySpotIdAndTimeRange(
             spot.getId(),
-            reservation.getStart(),
-            reservation.getEnd()
+            requestDTO.getStart(),
+            requestDTO.getEnd()
         );
         if (isReserved) {
-            throw new IllegalStateException("Spot is no longer available.");
+            throw new SpotNotAvailableException("Spot is no longer available.");
         }
+
+        Reservation reservation = Reservation.builder()
+            .spotId(spot.getId())
+            .start(requestDTO.getStart())
+            .end(requestDTO.getEnd())
+            .paymentMethod(requestDTO.getPaymentMethod())
+            .build();
 
         double amount = priceCalculator(reservation);
 

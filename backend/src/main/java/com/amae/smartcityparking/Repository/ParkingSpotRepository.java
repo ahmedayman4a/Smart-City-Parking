@@ -38,7 +38,11 @@ public List<ParkingSpot> findByLotIdAndTime(int lotId, LocalDateTime start, Loca
                     SELECT 1
                     FROM reservation r
                     WHERE r.spot_id = ps.id
-                      AND NOT (r.end <= ? OR r.start >= ?)
+                        AND ( (? BETWEEN r.start AND r.end)
+                            OR (? BETWEEN r.start AND r.end)
+                            OR (r.start BETWEEN ? AND ?)
+                            OR (r.end BETWEEN ? AND ?)
+                        )
                   )
                 """;
     return jdbcTemplate.query(
@@ -48,7 +52,7 @@ public List<ParkingSpot> findByLotIdAndTime(int lotId, LocalDateTime start, Loca
                     .lotId(rs.getInt("parking_lot_id"))
                     .spotNumber(rs.getInt("spot_number"))
                     .build(),
-            lotId, end, start // Pass end first, then start
+            lotId, start, end, start, end, start, end
     );
 }
 
