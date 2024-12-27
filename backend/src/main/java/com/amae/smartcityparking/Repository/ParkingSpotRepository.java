@@ -5,6 +5,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public class ParkingSpotRepository {
@@ -26,4 +28,28 @@ public class ParkingSpotRepository {
             return stmt;
         });
     }
+
+public List<ParkingSpot> findByLotIdAndTime(int lotId, LocalDateTime start, LocalDateTime end) {
+    String sql = """
+                SELECT * 
+                FROM parking_spot ps
+                WHERE ps.parking_lot_id = ?
+                  AND NOT EXISTS (
+                    SELECT 1
+                    FROM reservation r
+                    WHERE r.spot_id = ps.id
+                      AND NOT (r.end <= ? OR r.start >= ?)
+                  )
+                """;
+    return jdbcTemplate.query(
+            sql,
+            (rs, rowNum) -> ParkingSpot.builder()
+                    .id(rs.getInt("id"))
+                    .lotId(rs.getInt("parking_lot_id"))
+                    .spotNumber(rs.getInt("spot_number"))
+                    .build(),
+            lotId, end, start // Pass end first, then start
+    );
+}
+
 }
