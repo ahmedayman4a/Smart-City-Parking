@@ -1,0 +1,8 @@
+CREATE TABLE `parking_sensor` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `spot_id` BIGINT NOT NULL,
+    `status` ENUM('OCCUPIED', 'VACANT', 'FAULTY') NOT NULL DEFAULT 'VACANT',
+    `last_updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`spot_id`) REFERENCES `parking_spot`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

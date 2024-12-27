@@ -1,4 +1,5 @@
 export interface BaseUserDTO {
+
     email: string;
     password: string;
     username: string;
@@ -13,7 +14,9 @@ export interface BaseUserDTO {
     carModel: string;
   }
   
-  export interface ManagerDTO extends BaseUserDTO {}
+  export interface ManagerDTO extends BaseUserDTO {
+    id: string; // Assuming the backend provides an ID
+  }
   
   export enum Role {
     Driver = 'Driver',

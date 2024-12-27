@@ -100,7 +100,7 @@ public class UserRepository {
 //    }
 
     public Optional<User> findByEmail(String email) {
-        String sql = "SELECT * FROM user WHERE LOWER(email) = LOWER(?)";
+        String sql = "SELECT * FROM User WHERE LOWER(email) = LOWER(?)";
         try {
             return Optional.of(
                     jdbcTemplate.queryForObject(sql, new Object[]{email.trim()}, (rs, rowNum) ->
