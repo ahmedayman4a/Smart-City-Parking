@@ -1,5 +1,6 @@
 package com.amae.smartcityparking.controllers;
 
+import com.amae.smartcityparking.Entity.User;
 import com.amae.smartcityparking.dtos.requests.ReservationRequestDTO;
 import com.amae.smartcityparking.dtos.responses.ReservationResponseDTO;
 import com.amae.smartcityparking.models.Reservation;
@@ -21,34 +22,27 @@ public class ReservationController {
         this.reservationService = reservationService;
     }
 
-    @GetMapping("/")
-    public List<ReservationResponseDTO> index() {
-        List<Reservation> reservations = reservationService.getUserReservations(1);
-        return ReservationResponseDTO.from(reservations);
+    @GetMapping("/all")
+    public List<ReservationResponseDTO> all() {
+        return reservationService.getAll();
     }
 
-    @PostMapping("/")
-    public Reservation store(@RequestBody ReservationRequestDTO requestDTO, @AuthenticationPrincipal UserDetails userDetails) {
-        Reservation reservation = new Reservation();
-        // reservation.setUserId(userDetails.getUsername());
-        reservation.setSpotId(requestDTO.getSpotId());
-        reservation.setAmount(requestDTO.getAmount());
-        reservation.setPaymentMethod(requestDTO.getPaymentMethod());
-        reservation.setStart(LocalDateTime.parse(requestDTO.getStart()));
-        reservation.setEnd(LocalDateTime.parse(requestDTO.getEnd()));
-        reservation.setStatus("PENDING"); // Default status
 
-        reservationService.reserveSpot(reservation);
+    @GetMapping("/")
+    public List<ReservationResponseDTO> allReservations(@AuthenticationPrincipal UserDetails userDetails) {
+        return reservationService.getUserReservations((User) userDetails);
+    }
 
+    @PostMapping("/reserve")
+    public Reservation reserve(@RequestBody ReservationRequestDTO requestDTO, @AuthenticationPrincipal UserDetails userDetails) {
+        Reservation reservation = Reservation.builder()
+                        .spotId(requestDTO.getLotId())
+                        .start(LocalDateTime.parse(requestDTO.getStart()))
+                        .end(LocalDateTime.parse(requestDTO.getEnd()))
+                        .paymentMethod(requestDTO.getPaymentMethod())
+                        .build();
+        reservationService.reserveSpot(reservation, (User) userDetails);
         return reservation;
     }
 
-//    @PutMapping("/{id}")
-//    public String update(@PathVariable int id, @RequestBody ReservationRequestDTO requestDTO) {
-//        Reservation reservation = new Reservation();
-//        reservation.setId(id);
-//
-//        reservationService.updateReservation(requestDTO);
-//        return "Reservation updated";
-//    }
 }
