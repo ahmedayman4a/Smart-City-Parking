@@ -5,10 +5,13 @@ import com.amae.smartcityparking.Entity.ParkingSpot;
 import com.amae.smartcityparking.Enum.ParkingLotType;
 import com.amae.smartcityparking.Enum.ParkingSpotStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.Optional;
 
 @Repository
@@ -20,15 +23,20 @@ public class ParkingSpotRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void saveParkingSpot(ParkingSpot parkingSpot) {
+    public ParkingSpot save(ParkingSpot parkingSpot) {
         String sql = "INSERT INTO parking_spot (parking_lot_id, spot_number, status) VALUES (?, ?, ?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
         jdbcTemplate.update(connection -> {
-            PreparedStatement stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.setInt(1, parkingSpot.getLotId());
             stmt.setInt(2, parkingSpot.getSpotNumber());
             stmt.setString(3, parkingSpot.getStatus().name().toUpperCase());
             return stmt;
-        });
+        }, keyHolder);
+
+        parkingSpot.setId(keyHolder.getKey().intValue());
+        return parkingSpot;
     }
 
     public Optional<ParkingSpot> getParkingSpotById(int id) {
@@ -47,7 +55,7 @@ public class ParkingSpotRepository {
         });
     }
 
-    public void update(ParkingSpot parkingSpot) {
+    public ParkingSpot update(ParkingSpot parkingSpot) {
         String sql = "UPDATE parking_spot SET spot_number = ?, status = ? WHERE id = ?";
         jdbcTemplate.update(connection -> {
             PreparedStatement stmt = connection.prepareStatement(sql);
@@ -56,5 +64,6 @@ public class ParkingSpotRepository {
             stmt.setInt(3, parkingSpot.getId());
             return stmt;
         });
+        return parkingSpot;
     }
 }

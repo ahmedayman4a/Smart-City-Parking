@@ -1,9 +1,13 @@
 package com.amae.smartcityparking.Service;
 
 import com.amae.smartcityparking.DTO.ParkingLotDTO;
+import com.amae.smartcityparking.DTO.ParkingSpotDTO;
 import com.amae.smartcityparking.Entity.ParkingLot;
+import com.amae.smartcityparking.Entity.ParkingSpot;
 import com.amae.smartcityparking.Entity.User;
+import com.amae.smartcityparking.Enum.ParkingSpotStatus;
 import com.amae.smartcityparking.Repository.ParkingLotRepository;
+import com.amae.smartcityparking.Repository.ParkingSpotRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -13,9 +17,11 @@ import java.util.Optional;
 @Service
 public class ParkingLotService {
     private final ParkingLotRepository parkingLotRepository;
+    private final ParkingSpotRepository parkingSpotRepository;
 
-    public ParkingLotService(ParkingLotRepository parkingLotRepository) {
+    public ParkingLotService(ParkingLotRepository parkingLotRepository, ParkingSpotRepository parkingSpotRepository) {
         this.parkingLotRepository = parkingLotRepository;
+        this.parkingSpotRepository = parkingSpotRepository;
     }
 
 
@@ -38,8 +44,16 @@ public class ParkingLotService {
         try {
             int userId = ((User) token).getId();
             ParkingLot parkingLot = createEntityObject(dto, userId);
-            parkingLotRepository.saveParkingLot(parkingLot);
-            return ResponseEntity.ok("Parking lot created successfully");
+            parkingLot = parkingLotRepository.save(parkingLot);
+            for (int i = 0; i < parkingLot.getTotalSpaces(); i++) {
+                ParkingSpot new_spot = ParkingSpot.builder()
+                        .lotId(parkingLot.getId())
+                        .status(ParkingSpotStatus.fromString("AVAILABLE"))
+                        .spotNumber(i)
+                        .build();
+                parkingSpotRepository.save(new_spot);
+            }
+            return ResponseEntity.ok(parkingLot);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body("Parking lot creation failed");
@@ -48,7 +62,6 @@ public class ParkingLotService {
 
     public ResponseEntity<Object> getParkingLot(int id, UserDetails token) {
         try {
-            int userId = ((User) token).getId();
             Optional<ParkingLot> parkingLot = parkingLotRepository.getParkingLotById(id);
             if (parkingLot.isPresent()) {
                 return ResponseEntity.ok(parkingLot.get());
@@ -68,8 +81,8 @@ public class ParkingLotService {
             updatedParkingLot.setId(id);
             if (parkingLot.isPresent()) {
                 if (userId == parkingLot.get().getOwnerId()) {
-                    parkingLotRepository.update(updatedParkingLot);
-                    return ResponseEntity.ok("Parking lot updated successfully");
+                    updatedParkingLot = parkingLotRepository.update(updatedParkingLot);
+                    return ResponseEntity.ok(updatedParkingLot);
                 }
                 else{
                     return ResponseEntity.badRequest().body("Unauthorized access");

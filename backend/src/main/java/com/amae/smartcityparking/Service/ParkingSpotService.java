@@ -36,18 +36,16 @@ public class ParkingSpotService {
         try {
             int userId = ((User) token).getId();
             ParkingSpot parkingSpot = createEntityObject(dto, userId);
-            parkingSpotRepository.saveParkingSpot(parkingSpot);
-            System.out.print("Parking Spot Created: " + parkingSpot);
-            return ResponseEntity.ok("Parking spot created successfully");
+            parkingSpot = parkingSpotRepository.save(parkingSpot);
+            return ResponseEntity.ok(parkingSpot);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body("Parking spot creation failed");
         }
     }
 
-    public ResponseEntity<Object> getParkingSpot(int id, UserDetails token) {
+    public ResponseEntity<Object> getParkingSpot(int id) {
         try {
-            int userId = ((User) token).getId();
             Optional<ParkingSpot> parkingSpot = parkingSpotRepository.getParkingSpotById(id);
             if (parkingSpot.isPresent()) {
                 return ResponseEntity.ok(parkingSpot.get());
@@ -63,19 +61,18 @@ public class ParkingSpotService {
         try {
             int userId = ((User) token).getId();
             Optional<ParkingLot> parkingLot = parkingLotRepository.getParkingLotById(dto.getLotId());
-            Optional<ParkingSpot> parkingSpot = parkingSpotRepository.getParkingSpotById(id);
-
             if (!parkingLot.isPresent()) {
                 return ResponseEntity.badRequest().body("Parking Lot not found");
             }
             if (userId != parkingLot.get().getOwnerId()) {
                 return ResponseEntity.badRequest().body("Unauthorized access");
             }
+            Optional<ParkingSpot> parkingSpot = parkingSpotRepository.getParkingSpotById(id);
             ParkingSpot updatedParkingSpot = createEntityObject(dto, userId);
             updatedParkingSpot.setId(id);
             if (parkingSpot.isPresent()) {
-                parkingSpotRepository.update(updatedParkingSpot);
-                return ResponseEntity.ok("Parking Spot updated successfully");
+                updatedParkingSpot = parkingSpotRepository.update(updatedParkingSpot);
+                return ResponseEntity.ok(updatedParkingSpot);
             }
             return ResponseEntity.badRequest().body("Parking Spot not found");
         } catch (Exception e) {

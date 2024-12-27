@@ -26,8 +26,8 @@ public class ParkingSpotController {
     }
 
     @GetMapping("/{id}/profile")
-    public ResponseEntity<Object> parkingSpotProfile(@PathVariable("lotId") int lotId, @PathVariable("id") int id, @AuthenticationPrincipal UserDetails token) {
-        return parkingSpotService.getParkingSpot(id, token);
+    public ResponseEntity<Object> parkingSpotProfile(@PathVariable("lotId") int lotId, @PathVariable("id") int id) {
+        return parkingSpotService.getParkingSpot(id);
     }
 
 

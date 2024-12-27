@@ -1,13 +1,15 @@
 package com.amae.smartcityparking.Repository;
 
-import com.amae.smartcityparking.DTO.ParkingLotDTO;
 import com.amae.smartcityparking.Entity.ParkingLot;
+import com.amae.smartcityparking.Entity.ParkingSpot;
 import com.amae.smartcityparking.Enum.ParkingLotType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.Optional;
 
 @Repository
@@ -19,10 +21,12 @@ public class ParkingLotRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void saveParkingLot(ParkingLot parkingLot) {
+    public ParkingLot save(ParkingLot parkingLot) {
         String sql = "INSERT INTO parking_lot (owner_id, name, address, longitude, latitude, start_price, rate_per_hour, penalty, total_spaces, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
         jdbcTemplate.update(connection -> {
-            PreparedStatement stmt = connection.prepareStatement(sql);
+            PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.setInt(1, parkingLot.getOwnerId());
             stmt.setString(2, parkingLot.getName());
             stmt.setString(3, parkingLot.getAddress());
@@ -34,7 +38,10 @@ public class ParkingLotRepository {
             stmt.setInt(9, parkingLot.getTotalSpaces());
             stmt.setString(10, parkingLot.getType().name().toUpperCase());
             return stmt;
-        });
+        }, keyHolder);
+
+        parkingLot.setId(keyHolder.getKey().intValue());
+        return parkingLot;
     }
 
     public Optional<ParkingLot> getParkingLotById(int id) {
@@ -60,7 +67,7 @@ public class ParkingLotRepository {
         });
     }
 
-    public void update(ParkingLot parkingLot) {
+    public ParkingLot update(ParkingLot parkingLot) {
         String sql = "UPDATE parking_lot SET name = ?, address = ?, longitude = ?, latitude = ?, start_price = ?, rate_per_hour = ?, penalty = ?, total_spaces = ?, type = ? WHERE id = ?";
         jdbcTemplate.update(connection -> {
             PreparedStatement stmt = connection.prepareStatement(sql);
@@ -76,5 +83,6 @@ public class ParkingLotRepository {
             stmt.setInt(10, parkingLot.getId());
             return stmt;
         });
+        return parkingLot;
     }
 }
