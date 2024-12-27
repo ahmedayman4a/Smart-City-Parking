@@ -41,6 +41,4 @@ public class ParkingManagerRepository {
         String insertParkingManagaerSQL = "INSERT INTO parkingmanager (manager_id) VALUES (?)";
         jdbcTemplate.update(insertParkingManagaerSQL, userId);
     }
-
-
 }
