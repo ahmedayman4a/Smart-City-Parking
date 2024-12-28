@@ -114,6 +114,7 @@ public class ReservationRepository {
                 INNER JOIN parking_spot s ON r.spot_id = s.id
                 INNER JOIN parking_lot l ON s.parking_lot_id = l.id
                 WHERE r.user_id = ?
+                ORDER BY r.created_at DESC
                \s""";
         return getReservations(userId, sql);
     }
@@ -126,6 +127,7 @@ public class ReservationRepository {
                 INNER JOIN parking_lot l ON s.parking_lot_id = l.id
                 INNER JOIN User u ON r.user_id = u.user_id
                 WHERE l.owner_id = ?
+                ORDER BY r.created_at DESC
                \s""";
 
         return getReservations(managerId, sql);
