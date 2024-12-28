@@ -78,6 +78,7 @@ public List<ParkingSpot> findByLotIdAndTime(int lotId, LocalDateTime start, Loca
                     SELECT 1
                     FROM reservation r
                     WHERE r.spot_id = ps.id
+                        AND r.status != 'CANCELLED'
                         AND ( (? BETWEEN r.start AND r.end)
                             OR (? BETWEEN r.start AND r.end)
                             OR (r.start BETWEEN ? AND ?)

@@ -6,6 +6,7 @@ import com.amae.smartcityparking.dtos.responses.ReservationResponseDTO;
 import com.amae.smartcityparking.models.Reservation;
 import com.amae.smartcityparking.services.ReservationService;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +37,13 @@ public class ReservationController {
     @PostMapping("/reserve")
     public Reservation reserve(@RequestBody ReservationRequestDTO requestDTO, @AuthenticationPrincipal UserDetails userDetails) {
         return reservationService.reserveSpot(requestDTO, (User) userDetails);
+    }
+
+    @PutMapping("/cancel/{id}")
+    public ResponseEntity<Object> cancel(@PathVariable int id, @AuthenticationPrincipal UserDetails userDetails) {
+        reservationService.cancelReservation(id, (User) userDetails);
+        return ResponseEntity.ok("Reservation cancelled successfully");
+
     }
 
 }
