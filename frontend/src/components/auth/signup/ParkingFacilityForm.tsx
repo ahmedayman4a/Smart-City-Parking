@@ -6,6 +6,7 @@ import Dropdown from "../Dropdown";
 import MapSelector from "../MapSelector";
 import apiClient from "../../../api/apiClient";
 import { useAuth } from "../../../context/AuthContext";
+import { log } from "console";
 
 export default function ParkingFacilityForm({ managerData }: any) {
   const [formData, setFormData] = useState({
@@ -53,6 +54,10 @@ export default function ParkingFacilityForm({ managerData }: any) {
       longitude: lng,
       latitude: lat,
     });
+  };
+
+  const handleSkip = () => {
+    login(managerData.email, managerData.password);
   };
 
   return (
@@ -133,6 +138,7 @@ export default function ParkingFacilityForm({ managerData }: any) {
       </div>
       <MapSelector onLocationSelect={handleLocationSelect} />
       <AuthButton type="submit" text="Register Facility" />
+      <AuthButton type="button" text="Skip" onClick={handleSkip} />
     </form>
   );
 }
