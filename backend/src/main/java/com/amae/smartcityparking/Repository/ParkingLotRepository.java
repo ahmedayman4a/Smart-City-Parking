@@ -3,6 +3,7 @@ package com.amae.smartcityparking.Repository;
 import com.amae.smartcityparking.Entity.ParkingLot;
 import com.amae.smartcityparking.Entity.ParkingSpot;
 import com.amae.smartcityparking.Enum.ParkingLotType;
+import com.amae.smartcityparking.Enum.ParkingSpotStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -117,5 +118,24 @@ public class ParkingLotRepository {
                 .totalSpaces(rs.getInt("total_spaces"))
                 .type(ParkingLotType.fromString(rs.getString("type")))
                 .build();
+    }
+
+    public List<ParkingSpot> getParkingSpotsByLotId(int lotId) {
+        String sql = "SELECT * FROM parking_spot WHERE parking_lot_id = ?";
+        return jdbcTemplate.query(sql, new Object[]{lotId}, parkingSpotRowMapper());
+    }
+
+    private RowMapper<ParkingSpot> parkingSpotRowMapper() {
+        return (rs, rowNum) -> ParkingSpot.builder()
+                .id(rs.getInt("id"))
+                .lotId(rs.getInt("parking_lot_id"))
+                .spotNumber(rs.getInt("spot_number"))
+                .status(ParkingSpotStatus.fromString(rs.getString("status")))
+                .build();
+    }
+
+    public List<ParkingLot> getParkingLotsByUserId(int userId) {
+        String sql = "SELECT * FROM parking_lot WHERE owner_id = ?";
+        return jdbcTemplate.query(sql, new Object[]{userId}, parkingLotRowMapper());
     }
 }

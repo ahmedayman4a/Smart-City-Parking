@@ -12,7 +12,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -84,6 +86,19 @@ public class ParkingSpotService {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body("Parking lot not found");
+        }
+    }
+
+    public ResponseEntity<Object> getAllParkingSpots(int lotId) {
+        try {
+            List<ParkingSpot> parkingSpots = parkingLotRepository.getParkingSpotsByLotId(lotId);
+            Map<String, Object> response = new HashMap<>();
+            response.put("parkingSpots", parkingSpots);
+            response.put("size", parkingSpots.size());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Parking Spots not found");
         }
     }
 }

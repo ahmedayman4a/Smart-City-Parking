@@ -107,4 +107,17 @@ public class ParkingLotService {
         return ResponseEntity.ok(response);
     }
 
+    public ResponseEntity<Object> getParkingLotsByUserId(UserDetails token) {
+        try {
+            int userId = ((User) token).getId();
+            List<ParkingLot> parkingLots = parkingLotRepository.getParkingLotsByUserId(userId);
+            Map<String, Object> response = new HashMap<>();
+            response.put("size", parkingLots.size());
+            response.put("items", parkingLots);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Parking lot not found");
+        }
+    }
 }

@@ -41,4 +41,9 @@ public class ParkingLotController {
     public ResponseEntity<Object> getAllParkingLots(@RequestParam(value = "address", required = false) String address) {
         return parkingLotService.getAllParkingLots(address);
     }
+
+    @GetMapping("/user_all")
+    public ResponseEntity<Object> getAllUserParkingLots(@AuthenticationPrincipal UserDetails token) {
+        return parkingLotService.getParkingLotsByUserId(token);
+    }
 }
