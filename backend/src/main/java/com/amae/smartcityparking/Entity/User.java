@@ -32,6 +32,7 @@ public class User implements UserDetails {
     private LocalDate dateOfBirth;
     private int age;
     private Status status;
+    private double balance;
 
 
     @Override
