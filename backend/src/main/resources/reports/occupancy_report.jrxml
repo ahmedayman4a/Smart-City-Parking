@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" name="occupancy">
+    <queryString>
+        <![CDATA[
+            SELECT
+                pl.name as lot_name,
+                pl.total_spaces,
+                pl.current_occupancy,
+                (pl.current_occupancy * 100.0 / pl.total_spaces) as occupancy_rate
+            FROM parking_lot pl
+        ]]>
+    </queryString>
+    <field name="lot_name" class="java.lang.String"/>
+    <field name="total_spaces" class="java.lang.Integer"/>
+    <field name="current_occupancy" class="java.lang.Integer"/>
+    <field name="occupancy_rate" class="java.lang.Double"/>
+
+
+    <title>
+        <band height="50">
+            <staticText>
+                <reportElement x="0" y="0" width="555" height="30"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="16" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Parking Lots Occupancy Report]]></text>
+            </staticText>
+        </band>
+    </title>
+
+
+    <columnHeader>
+        <band height="30">
+            <staticText>
+                <reportElement x="0" y="0" width="200" height="30"/>
+                <text><![CDATA[Parking Lot]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="200" y="0" width="100" height="30"/>
+                <text><![CDATA[Total Spaces]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="300" y="0" width="100" height="30"/>
+                <text><![CDATA[Current Occupancy]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="400" y="0" width="100" height="30"/>
+                <text><![CDATA[Occupancy Rate]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+
+    <detail>
+        <band height="30">
+            <textField>
+                <reportElement x="0" y="0" width="200" height="30"/>
+                <textFieldExpression><![CDATA[$F{lot_name}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="200" y="0" width="100" height="30"/>
+                <textFieldExpression><![CDATA[$F{total_spaces}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="300" y="0" width="100" height="30"/>
+                <textFieldExpression><![CDATA[$F{current_occupancy}]]></textFieldExpression>
+            </textField>
+            <textField pattern="#,##0.00'%'">
+                <reportElement x="400" y="0" width="100" height="30"/>
+                <textFieldExpression><![CDATA[$F{occupancy_rate}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+</jasperReport>

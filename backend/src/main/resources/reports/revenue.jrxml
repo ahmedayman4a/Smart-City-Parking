@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="revenue">
+    <queryString>
+        <![CDATA[
+            WITH daily_revenue AS (
+                SELECT 
+                    pl.id as lot_id,
+                    DATE(r.start) as date,
+                    COUNT(r.id) as daily_reservations,
+                    SUM(r.amount) as daily_amount
+                FROM parking_lot pl
+                JOIN parking_spot ps ON ps.parking_lot_id = pl.id
+                JOIN reservation r ON r.spot_id = ps.id
+                AND r.start >= DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 30 DAY)
+                GROUP BY pl.id, DATE(r.start)
+            )
+            SELECT 
+                pl.name as lot_name,
+                COUNT(r.id) as total_reservations,
+                SUM(r.amount) as total_revenue,
+                AVG(r.amount) as avg_revenue_per_reservation,
+                MAX(dr.daily_amount) as highest_daily_revenue,
+                AVG(dr.daily_amount) as avg_daily_revenue
+            FROM parking_lot pl
+            LEFT JOIN parking_spot ps ON ps.parking_lot_id = pl.id
+            LEFT JOIN reservation r ON r.spot_id = ps.id
+            LEFT JOIN daily_revenue dr ON dr.lot_id = pl.id
+            GROUP BY pl.id
+            ORDER BY total_revenue DESC
+        ]]>
+    </queryString>
+
+    <field name="lot_name" class="java.lang.String"/>
+    <field name="total_reservations" class="java.lang.Integer"/>
+    <field name="total_revenue" class="java.lang.Double"/>
+    <field name="avg_revenue_per_reservation" class="java.lang.Double"/>
+    <field name="highest_daily_revenue" class="java.lang.Double"/>
+    <field name="avg_daily_revenue" class="java.lang.Double"/>
+
+    <title>
+        <band height="50">
+            <staticText>
+                <reportElement x="0" y="0" width="555" height="30"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="16" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Revenue Analysis Report]]></text>
+            </staticText>
+        </band>
+    </title>
+
+    <columnHeader>
+        <band height="30">
+            <staticText>
+                <reportElement x="0" y="0" width="150" height="30"/>
+                <text><![CDATA[Parking Lot]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="150" y="0" width="80" height="30"/>
+                <text><![CDATA[Reservations]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="230" y="0" width="100" height="30"/>
+                <text><![CDATA[Total Revenue]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="330" y="0" width="75" height="30"/>
+                <text><![CDATA[Avg/Res]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="405" y="0" width="75" height="30"/>
+                <text><![CDATA[Peak Daily]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="480" y="0" width="75" height="30"/>
+                <text><![CDATA[Avg Daily]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+
+    <detail>
+        <band height="30">
+            <textField>
+                <reportElement x="0" y="0" width="150" height="30"/>
+                <textFieldExpression><![CDATA[$F{lot_name}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="150" y="0" width="80" height="30"/>
+                <textFieldExpression><![CDATA[$F{total_reservations}]]></textFieldExpression>
+            </textField>
+            <textField pattern="¤#,##0.00">
+                <reportElement x="230" y="0" width="100" height="30"/>
+                <textFieldExpression><![CDATA[$F{total_revenue}]]></textFieldExpression>
+            </textField>
+            <textField pattern="¤#,##0.00">
+                <reportElement x="330" y="0" width="75" height="30"/>
+                <textFieldExpression><![CDATA[$F{avg_revenue_per_reservation}]]></textFieldExpression>
+            </textField>
+            <textField pattern="¤#,##0.00">
+                <reportElement x="405" y="0" width="75" height="30"/>
+                <textFieldExpression><![CDATA[$F{highest_daily_revenue}]]></textFieldExpression>
+            </textField>
+            <textField pattern="¤#,##0.00">
+                <reportElement x="480" y="0" width="75" height="30"/>
+                <textFieldExpression><![CDATA[$F{avg_daily_revenue}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+
+    <summary>
+        <band height="200">
+            <barChart>
+                <chart evaluationTime="Report">
+                    <reportElement x="0" y="0" width="555" height="200"/>
+                    <chartTitle>
+                        <titleExpression><![CDATA["Revenue by Parking Lot"]]></titleExpression>
+                    </chartTitle>
+                </chart>
+                <categoryDataset>
+                    <categorySeries>
+                        <seriesExpression><![CDATA["Revenue"]]></seriesExpression>
+                        <categoryExpression><![CDATA[$F{lot_name}]]></categoryExpression>
+                        <valueExpression><![CDATA[$F{total_revenue}]]></valueExpression>
+                    </categorySeries>
+                </categoryDataset>
+                <barPlot>
+                    <plot/>
+                </barPlot>
+            </barChart>
+        </band>
+    </summary>
+</jasperReport>
