@@ -17,8 +17,12 @@ public class ReservationResponseDTO {
     private String status;
     private String lotName;
     private String lotAddress;
+    private int spotNumber;
+    private String username;
     private String start;
     private String end;
+    private double latitude;
+    private double longitude;
 
     public static ReservationResponseDTO from(Reservation reservation) {
         return ReservationResponseDTO.builder()
