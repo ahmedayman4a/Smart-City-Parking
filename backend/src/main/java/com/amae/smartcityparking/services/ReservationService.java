@@ -47,7 +47,7 @@ public class ReservationService {
             throw new NoAvailableSpotsException("No available parking spots for the selected time range.");
         }
 
-        ParkingSpot spot = availableSpots.getFirst(); // Get the first available spot
+        ParkingSpot spot = availableSpots.get(0); // Get the first available spot
 
         boolean isReserved = reservationRepository.existsBySpotIdAndTimeRange(
             spot.getId(),
