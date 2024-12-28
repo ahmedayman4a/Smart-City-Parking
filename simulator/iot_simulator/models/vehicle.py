@@ -1,7 +1,9 @@
 from dataclasses import dataclass
+from datetime import datetime, timedelta
 
 @dataclass
 class Vehicle:
-    id: int
-    arrival_time: float
-    parking_duration: float
+    id: str
+    arrival_time: datetime
+    parking_duration: timedelta
+    reservation_id: int = None
