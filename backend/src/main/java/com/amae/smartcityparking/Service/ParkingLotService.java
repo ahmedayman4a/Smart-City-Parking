@@ -12,6 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -89,6 +92,29 @@ public class ParkingLotService {
                 }
             }
             return ResponseEntity.badRequest().body("Parking lot not found");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Parking lot not found");
+        }
+    }
+
+    public ResponseEntity<Object> getAllParkingLots(String address) {
+        List<ParkingLot> parkingLots;
+        parkingLots = parkingLotRepository.searchByAddress(address);
+        Map<String, Object> response = new HashMap<>();
+        response.put("size", parkingLots.size());
+        response.put("items", parkingLots);
+        return ResponseEntity.ok(response);
+    }
+
+    public ResponseEntity<Object> getParkingLotsByUserId(UserDetails token) {
+        try {
+            int userId = ((User) token).getId();
+            List<ParkingLot> parkingLots = parkingLotRepository.getParkingLotsByUserId(userId);
+            Map<String, Object> response = new HashMap<>();
+            response.put("size", parkingLots.size());
+            response.put("items", parkingLots);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body("Parking lot not found");

@@ -36,4 +36,9 @@ public class ParkingSpotController {
         dto.setLotId(lotId);
         return parkingSpotService.updateParkingSpot(dto, id, token);
     }
+
+    @GetMapping("/all")
+    public ResponseEntity<Object> getAllParkingSpots(@PathVariable("lotId") int lotId) {
+        return parkingSpotService.getAllParkingSpots(lotId);
+    }
 }

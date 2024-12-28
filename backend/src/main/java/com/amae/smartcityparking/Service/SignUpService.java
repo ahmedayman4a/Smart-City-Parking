@@ -48,7 +48,26 @@ public class SignUpService {
     public ResponseEntity<Object> parkingManagerSignUp(UserDTO userDTO) {
         try {
             saveParkingManager(userDTO);
-            return ResponseEntity.ok(ResponseDTO.builder().message("Parking Manager registered successfully").success(true).statusCode(200).build());
+            User user = User.builder()
+                    .email(userDTO.getEmail())
+                    .password(passwordEncoder.encode(userDTO.getPassword()))
+                    .username(userDTO.getUsername())
+                    .firstName(userDTO.getFirstName())
+                    .lastName(userDTO.getLastName())
+                    .phone(userDTO.getPhoneNumber())
+                    .createdAt(LocalDateTime.now())
+                    .dateOfBirth(userDTO.getBirthDate())
+                    .age(LocalDate.now().getYear() - userDTO.getBirthDate().getYear())
+                    .role(Role.ParkingManager)
+                    .status(Status.ACTIVE)
+                    .build();
+            Map<String, Object> claims = Map.of("role", user.getRole().toString(),
+                    "email", user.getEmail(),
+                    "username", user.getUsername()
+            );
+            String token = jwtService.generateToken(claims, user);
+            System.out.println(token);
+            return ResponseEntity.ok(ResponseDTO.builder().message("Parking Manager registered successfully").success(true).statusCode(200).data(token).build());
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body(ResponseDTO.builder().message("Parking Manager registration failed").success(false).statusCode(400).build());
