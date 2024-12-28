@@ -13,6 +13,7 @@ import java.util.List;
 public class ReservationRepository {
     private final JdbcTemplate jdbcTemplate;
 
+
     public ReservationRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -33,6 +34,7 @@ public class ReservationRepository {
         String lastInsertedIdSql = "SELECT LAST_INSERT_ID()";
         int id = jdbcTemplate.queryForObject(lastInsertedIdSql, Integer.class);
         reservation.setId(id);
+
         return reservation;
     }
 
@@ -236,5 +238,16 @@ public List<ReservationResponseDTO> findBySpotIdStatusEndTime(int spotId, String
                 spotId, start, end, start, end
         );
         return count != null && count > 0;
+    }
+
+    public int getParkingManagerId(int id) {
+        String sql = """
+                    SELECT l.owner_id
+                    FROM reservation r
+                    INNER JOIN parking_spot s ON r.spot_id = s.id
+                    INNER JOIN parking_lot l ON s.parking_lot_id = l.id
+                    WHERE r.id = ?
+                    """;
+        return jdbcTemplate.queryForObject(sql, Integer.class, id);
     }
 }

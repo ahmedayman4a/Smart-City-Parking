@@ -1,19 +1,21 @@
-//package com.amae.smartcityparking.Event;
-//
-//import org.springframework.context.ApplicationEvent;
-//
-//public class ReservationEvent extends ApplicationEvent {
-//    private final Reservation reservation;
-//
-//    public ReservationEvent(Reservation reservation) {
-//        this.reservation = reservation;
-//    }
-//    public Reservation getReservation() {
-//        return reservation;
-//    }
-//
-//
-//}
+package com.amae.smartcityparking.Event;
+
+
+import com.amae.smartcityparking.Entity.Reservation;
+import org.springframework.context.ApplicationEvent;
+
+public class ReservationEvent extends ApplicationEvent {
+    private final Reservation reservation;
+    public ReservationEvent(Object source, Reservation reservation) {
+        super(source);
+        this.reservation = reservation;
+    }
+    public Reservation getReservation() {
+        return reservation;
+    }
+
+
+}
 
 // add this in Reservation service
 // private final ApplicationEventPublisher eventPublisher;

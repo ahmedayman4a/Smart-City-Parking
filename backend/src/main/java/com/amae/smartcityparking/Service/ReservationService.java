@@ -3,6 +3,7 @@ package com.amae.smartcityparking.Service;
 import com.amae.smartcityparking.Entity.ParkingLot;
 import com.amae.smartcityparking.Entity.ParkingSpot;
 import com.amae.smartcityparking.Enum.Role;
+import com.amae.smartcityparking.Event.ReservationEvent;
 import com.amae.smartcityparking.Repository.ParkingLotRepository;
 import com.amae.smartcityparking.Repository.ParkingSpotRepository;
 import com.amae.smartcityparking.Repository.UserRepository;
@@ -13,6 +14,7 @@ import com.amae.smartcityparking.exception.SpotNotAvailableException;
 import com.amae.smartcityparking.Entity.Reservation;
 import com.amae.smartcityparking.Entity.User;
 import com.amae.smartcityparking.Repository.ReservationRepository;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,12 +34,15 @@ public class ReservationService {
     private final ParkingSpotRepository parkingSpotRepository;
     private final UserRepository userRepository;
 
-    public ReservationService(ReservationRepository reservationRepository, ParkingSpotService parkingSpotService, ParkingLotRepository parkingLotRepository, ParkingSpotRepository parkingSpotRepository, UserRepository userRepository) {
+    private final ApplicationEventPublisher eventPublisher;
+
+    public ReservationService(ReservationRepository reservationRepository, ParkingSpotService parkingSpotService, ParkingLotRepository parkingLotRepository, ParkingSpotRepository parkingSpotRepository, UserRepository userRepository, ApplicationEventPublisher eventPublisher) {
         this.reservationRepository = reservationRepository;
         this.parkingSpotService = parkingSpotService;
         this.parkingLotRepository = parkingLotRepository;
         this.parkingSpotRepository = parkingSpotRepository;
         this.userRepository = userRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     public List<ReservationResponseDTO> getAll() {
@@ -66,6 +71,7 @@ public class ReservationService {
             requestDTO.getEnd()
         );
         if (isReserved) {
+
             throw new SpotNotAvailableException("Spot is no longer available.");
         }
 
@@ -82,8 +88,9 @@ public class ReservationService {
         reservation.setUserId(user.getId());
         reservation.setSpotId(spot.getId());
         reservation.setStatus("PENDING");
-
-        return reservationRepository.save(reservation);
+        Reservation savedReservation = reservationRepository.save(reservation);
+        eventPublisher.publishEvent(new ReservationEvent(this, reservation));
+        return savedReservation;
     }
 
     public double priceCalculator(Reservation reservation) {
