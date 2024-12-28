@@ -2,11 +2,15 @@ package com.amae.smartcityparking.Service;
 
 import com.amae.smartcityparking.DTO.ParkingLotDTO;
 import com.amae.smartcityparking.DTO.ParkingSpotDTO;
+import com.amae.smartcityparking.DTO.SensorStatusUpdateRequest;
 import com.amae.smartcityparking.Entity.ParkingLot;
 import com.amae.smartcityparking.Entity.ParkingSpot;
 import com.amae.smartcityparking.Entity.User;
+import com.amae.smartcityparking.Enum.ParkingSpotStatus;
 import com.amae.smartcityparking.Repository.ParkingLotRepository;
 import com.amae.smartcityparking.Repository.ParkingSpotRepository;
+import com.amae.smartcityparking.services.ReservationService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -21,10 +25,12 @@ import java.util.Optional;
 public class ParkingSpotService {
     private final ParkingSpotRepository parkingSpotRepository;
     private final ParkingLotRepository parkingLotRepository;
+    private final ReservationService reservationService;
 
-    public ParkingSpotService(ParkingSpotRepository parkingSpotRepository, ParkingLotRepository parkingLotRepository) {
+    public ParkingSpotService(ParkingSpotRepository parkingSpotRepository, ParkingLotRepository parkingLotRepository,@Lazy ReservationService reservationService) {
         this.parkingSpotRepository = parkingSpotRepository;
         this.parkingLotRepository = parkingLotRepository;
+        this.reservationService = reservationService;
     }
 
     public List<ParkingSpot> getAvailableSpots(int lotId, LocalDateTime start, LocalDateTime end) {
@@ -80,6 +86,24 @@ public class ParkingSpotService {
             updatedParkingSpot.setId(id);
             if (parkingSpot.isPresent()) {
                 updatedParkingSpot = parkingSpotRepository.update(updatedParkingSpot);
+                return ResponseEntity.ok(updatedParkingSpot);
+            }
+            return ResponseEntity.badRequest().body("Parking Spot not found");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Parking lot not found");
+        }
+    }
+    public ResponseEntity<Object> updateParkingSpotStatus(ParkingSpotStatus status, int id) {
+        try {
+            Optional<ParkingSpot> parkingSpot = parkingSpotRepository.getParkingSpotById(id);
+            if (parkingSpot.isPresent()) {
+                ParkingSpot updatedParkingSpot = parkingSpot.get();
+                updatedParkingSpot.setStatus(status);
+                updatedParkingSpot = parkingSpotRepository.update(updatedParkingSpot);
+                if(status == ParkingSpotStatus.AVAILABLE) {
+                    reservationService.bulkMissedReservations(updatedParkingSpot.getId());
+                }
                 return ResponseEntity.ok(updatedParkingSpot);
             }
             return ResponseEntity.badRequest().body("Parking Spot not found");

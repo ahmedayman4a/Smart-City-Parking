@@ -1,7 +1,11 @@
 package com.amae.smartcityparking.services;
 
+import com.amae.smartcityparking.Entity.ParkingLot;
 import com.amae.smartcityparking.Entity.ParkingSpot;
 import com.amae.smartcityparking.Enum.Role;
+import com.amae.smartcityparking.Repository.ParkingLotRepository;
+import com.amae.smartcityparking.Repository.ParkingSpotRepository;
+import com.amae.smartcityparking.Repository.UserRepository;
 import com.amae.smartcityparking.Service.ParkingSpotService;
 import com.amae.smartcityparking.dtos.requests.ReservationRequestDTO;
 import com.amae.smartcityparking.dtos.responses.ReservationResponseDTO;
@@ -24,9 +28,16 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final ParkingSpotService parkingSpotService;
-    public ReservationService(ReservationRepository reservationRepository, ParkingSpotService parkingSpotService) {
+    private final ParkingLotRepository parkingLotRepository;
+    private final ParkingSpotRepository parkingSpotRepository;
+    private final UserRepository userRepository;
+
+    public ReservationService(ReservationRepository reservationRepository, ParkingSpotService parkingSpotService, ParkingLotRepository parkingLotRepository, ParkingSpotRepository parkingSpotRepository, UserRepository userRepository) {
         this.reservationRepository = reservationRepository;
         this.parkingSpotService = parkingSpotService;
+        this.parkingLotRepository = parkingLotRepository;
+        this.parkingSpotRepository = parkingSpotRepository;
+        this.userRepository = userRepository;
     }
 
     public List<ReservationResponseDTO> getAll() {
@@ -47,7 +58,7 @@ public class ReservationService {
             throw new NoAvailableSpotsException("No available parking spots for the selected time range.");
         }
 
-        ParkingSpot spot = availableSpots.getFirst(); // Get the first available spot
+        ParkingSpot spot = availableSpots.get(0); // Get the first available spot
 
         boolean isReserved = reservationRepository.existsBySpotIdAndTimeRange(
             spot.getId(),
@@ -76,9 +87,9 @@ public class ReservationService {
     }
 
     public double priceCalculator(Reservation reservation) {
-//        ParkingLot parkingLot = parkingLotRepository.findBySpotId(reservation.getSpotId());
-//        int pricePerHour = parkingLot.getPrice();
-        int pricePerHour = 10;
+        int lot_id = parkingSpotRepository.getParkingSpotById(reservation.getSpotId()).get().getLotId();
+        ParkingLot parkingLot = parkingLotRepository.getParkingLotById(lot_id).get();
+        float pricePerHour = parkingLot.getStartPrice();
         double hours = (Duration.between(reservation.getStart(), reservation.getEnd()).toMinutes()) / 60.0;
 
         int peakStartHour = 8;
@@ -122,7 +133,7 @@ public class ReservationService {
     }
 
     public void cancelReservation(int id, User user) {
-        Reservation reservation = reservationRepository.findById(id);
+        ReservationResponseDTO reservation = reservationRepository.findByIdWithPenalty(id);
         if (reservation == null) {
             throw new IllegalArgumentException("Reservation not found.");
         }
@@ -135,6 +146,67 @@ public class ReservationService {
         }
 
         reservationRepository.updateStatus(id, "CANCELLED");
+        applyPenalty(reservation);
+    }
+
+    public void updateStatus(int id, String status) {
+        if (status == null || status.isEmpty()) {
+            throw new IllegalArgumentException("Status cannot be null or empty.");
+        }
+        reservationRepository.updateStatus(id, status);
+    }
+
+    private void validateReservation(ReservationResponseDTO reservation, String requiredStatus) {
+        if (reservation == null) {
+            throw new IllegalArgumentException("Reservation not found.");
+        }
+        if (!reservation.getStatus().equals(requiredStatus)) {
+            throw new IllegalArgumentException(String.format("Reservation is not in %s status.", requiredStatus));
+        }
+    }
+
+    public void applyPenalty(ReservationResponseDTO reservation) {
+        validateReservation(reservation, "PENDING");
+
+        User user = userRepository.findById(reservation.getUserId());
+        if (user == null) {
+            throw new IllegalArgumentException("User not found.");
+        }
+
+        double penalty = reservation.getPenalty();
+        if (penalty > 0) {
+            user.setBalance(user.getBalance() - penalty);
+            userRepository.update(user); // Persist balance update
+        }
+    }
+
+    public void bulkMissedReservations(int spotId) {
+        List<ReservationResponseDTO> reservations = reservationRepository.findBySpotIdStatusEndTime(
+            spotId, "PENDING", LocalDateTime.now()
+        );
+
+        if (reservations.isEmpty()) {
+            return; // No pending reservations, nothing to update
+        }
+
+        for (ReservationResponseDTO reservation : reservations) {
+            updateStatus(reservation.getId(), "MISSED");
+            applyPenalty(reservation);
+        }
+    }
+
+    public void cancelReservation(ReservationResponseDTO reservation) {
+        validateReservation(reservation, "PENDING");
+
+        updateStatus(reservation.getId(), "CANCELLED");
+
+        // No penalty for normal users upon cancellation
+        User user = userRepository.findById(reservation.getUserId());
+        if (user != null && reservation.getPenalty() > 0) {
+            // Refund the penalty amount if already deducted (optional logic)
+            user.setBalance(user.getBalance() + reservation.getPenalty());
+            userRepository.update(user);
+        }
     }
 
 }

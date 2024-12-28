@@ -132,6 +132,62 @@ public class ReservationRepository {
 
         return getReservations(managerId, sql);
     }
+    public ReservationResponseDTO findByIdWithPenalty(int id) {
+        String sql = """
+                    SELECT r.*, l.penalty FROM reservation r
+                    INNER JOIN parking_spot s ON r.spot_id = s.id
+                    INNER JOIN parking_lot l ON s.parking_lot_id = l.id
+                    WHERE r.id = ?
+                    """;
+        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> {
+            return ReservationResponseDTO.builder()
+                    .id(rs.getInt("id"))
+                    .userId(rs.getInt("user_id"))
+                    .spotId(rs.getInt("spot_id"))
+                    .amount(rs.getDouble("amount"))
+                    .paymentMethod(rs.getString("payment_method"))
+                    .start(rs.getTimestamp("start").toLocalDateTime().toString())
+                    .end(rs.getTimestamp("end").toLocalDateTime().toString())
+                    .status(rs.getString("status"))
+                    .lotName(rs.getString("lot_name"))
+                    .lotAddress(rs.getString("lot_address"))
+                    .spotNumber(rs.getInt("spot_number"))
+                    .latitude(rs.getDouble("latitude"))
+                    .longitude(rs.getDouble("longitude"))
+                    .penalty(rs.getInt("penalty"))
+                    .build();
+        }, id);
+    }
+public List<ReservationResponseDTO> findBySpotIdStatusEndTime(int spotId, String status, LocalDateTime endTime) {
+    String sql = """
+                SELECT r.*, l.penalty 
+                FROM reservation r
+                INNER JOIN parking_spot s ON r.spot_id = s.id
+                INNER JOIN parking_lot l ON s.parking_lot_id = l.id
+                WHERE r.spot_id = ? AND r.status = ? AND r.end <= ?
+                """;
+
+    return jdbcTemplate.query(sql,
+        ps -> {
+            ps.setInt(1, spotId);
+            ps.setString(2, status);
+            ps.setTimestamp(3, java.sql.Timestamp.valueOf(endTime)); // Convert LocalDateTime to Timestamp
+        },
+        (rs, rowNum) -> {
+            return ReservationResponseDTO.builder()
+                    .id(rs.getInt("id"))
+                    .userId(rs.getInt("user_id"))
+                    .spotId(rs.getInt("spot_id"))
+                    .amount(rs.getDouble("amount"))
+                    .paymentMethod(rs.getString("payment_method"))
+                    .start(rs.getTimestamp("start").toLocalDateTime().toString())
+                    .end(rs.getTimestamp("end").toLocalDateTime().toString())
+                    .status(rs.getString("status"))
+                    .penalty(rs.getInt("penalty"))
+                    .build();
+        }
+    );
+}
 
     private List<ReservationResponseDTO> getReservations(int userId, String sql) {
         return jdbcTemplate.query(sql, (rs, rowNum) -> {

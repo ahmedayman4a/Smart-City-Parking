@@ -1,5 +1,6 @@
 package com.amae.smartcityparking.models;
 
+import com.amae.smartcityparking.Entity.User;
 import lombok.Builder;
 import lombok.Data;
 

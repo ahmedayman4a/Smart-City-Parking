@@ -23,6 +23,7 @@ public class ReservationResponseDTO {
     private String end;
     private double latitude;
     private double longitude;
+    private int penalty;
 
     public static ReservationResponseDTO from(Reservation reservation) {
         return ReservationResponseDTO.builder()
