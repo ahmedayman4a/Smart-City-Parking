@@ -74,7 +74,11 @@
 			<artifactId>jjwt-api</artifactId>
 			<version>0.11.5</version>
 		</dependency>
-
+<!--		<dependency>-->
+<!--			<groupId>org.springframework</groupId>-->
+<!--			<artifactId>spring-messaging</artifactId>-->
+<!--			<version>5.3.30</version> &lt;!&ndash; Use the Spring version that matches your project &ndash;&gt;-->
+<!--		</dependency>-->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-impl</artifactId>
