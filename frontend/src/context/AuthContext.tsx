@@ -32,7 +32,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<string>('');
   const navigate = useNavigate();
 
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
+    const initializeAuth = async () => {
     const token = Cookies.get('authToken');
     if (token) {
       try {
@@ -52,24 +55,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         };
         setUser(user);
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        console.log('User:', user);
-        console.log('Role:', user.role);
-        switch (user.role) {
-          case 'Admin':
-            navigate('/admin/dashboard');
-            break;
-          case 'ParkingManager':
-            navigate('/manager/dashboard');
-            break;
-          default:
-            navigate('/dashboard');
-        }
       } catch (error) {
         console.error('Token decoding error:', error);
         logout();
       }
     }
-  }, []);
+    setIsLoading(false);
+  };
+
+  initializeAuth();
+}, []);
+
 
   const login = async (email: string, password: string) => {
     try {
@@ -145,7 +141,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       logout,
       error 
     }}>
-      {children}
+      {!isLoading && children}
     </AuthContext.Provider>
   );
 }

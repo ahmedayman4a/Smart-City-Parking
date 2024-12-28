@@ -1,5 +1,6 @@
 import React from 'react';
 import { Calendar, Clock, MapPin } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import type { Reservation } from '../../types';
 
 const mockReservations: Reservation[] = [
@@ -16,6 +17,12 @@ const mockReservations: Reservation[] = [
 ];
 
 export default function ActiveReservations() {
+  const navigate = useNavigate();
+
+  const handleReservationClick = (reservationId: string) => {
+    navigate(`/reservation-details/${reservationId}`);
+  };
+
   return (
     <div className="bg-white shadow rounded-lg">
       <div className="px-4 py-5 sm:px-6">
@@ -24,7 +31,11 @@ export default function ActiveReservations() {
       <div className="border-t border-gray-200">
         <ul role="list" className="divide-y divide-gray-200">
           {mockReservations.map((reservation) => (
-            <li key={reservation.id} className="px-4 py-4 sm:px-6">
+            <li 
+              key={reservation.id} 
+              className="px-4 py-4 sm:px-6 cursor-pointer hover:bg-gray-50 transition-colors duration-200"
+              onClick={() => handleReservationClick(reservation.id)}
+            >
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
                   <div className="flex items-center text-sm text-gray-500">
