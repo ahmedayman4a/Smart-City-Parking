@@ -14,6 +14,7 @@ export interface User {
 // Parking spot details
 export interface ParkingSpot {
   id: string;
+  name: string;
   type: "regular" | "ev" | "disabled";
   status: "available" | "occupied" | "reserved";
   ratePerHour: number;

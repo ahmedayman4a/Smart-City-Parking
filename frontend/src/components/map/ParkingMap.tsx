@@ -5,6 +5,10 @@ import { reserveSpot } from "../../api/reservationService";
 import ReservationModal from "../dashboard/ReservationModal";
 import L from "leaflet";
 
+import regularSrc from "../../assets/parked-car.png";
+import evSrc from "../../assets/power-supply.png";
+import handSrc from "../../assets/wheelchair.png";
+
 interface ParkingMapProps {
   spots: ParkingSpot[];
 }
@@ -25,6 +29,23 @@ const MapAutoBounds = ({ spots }: { spots: ParkingSpot[] }) => {
   }, [spots, map]);
 
   return null;
+};
+
+const getIcon = (type: string) => {
+  // Map spot types to their respective icons
+  const iconMap = {
+    standard: regularSrc,
+    electric: evSrc,
+    handicap: handSrc,
+  };
+
+  const iconUrl = iconMap[type.toLowerCase()] || regularSrc; // Default to car icon if type not found
+  return L.icon({
+    iconUrl,
+    iconSize: [32, 32], // Customize size as needed
+    iconAnchor: [16, 32], // Adjust anchor point if necessary
+    popupAnchor: [0, -32], // Adjust popup position relative to the icon
+  });
 };
 
 export default function ParkingMap({ spots }: ParkingMapProps) {
@@ -77,10 +98,15 @@ export default function ParkingMap({ spots }: ParkingMapProps) {
         />
         <MapAutoBounds spots={spots} />
         {spots.map((spot) => (
-          <Marker key={spot.id} position={[spot.latitude, spot.longitude]}>
+          <Marker
+            key={spot.id}
+            position={[spot.latitude, spot.longitude]}
+            icon={getIcon(spot.type)}
+          >
             <Popup>
               <div className="p-2">
-                <h3 className="font-semibold">{spot.address}</h3>
+                <h3 className="font-semibold">{spot.name}</h3>
+                <h3 className="text-sm text-gray 600">{spot.address}</h3>
                 <p className="text-sm text-gray-600">{spot.type} Spot</p>
                 <p className="text-sm font-medium">
                   ${spot.ratePerHour.toFixed(2)}/hr
