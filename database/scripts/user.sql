@@ -11,6 +11,7 @@ CREATE TABLE User (
     username VARCHAR(45) UNIQUE,
     password VARCHAR(255),
     role ENUM('Driver', 'Admin', 'ParkingManager'),
+    balance DECIMAL(10, 2) DEFAULT 0.00,
     date_of_birth DATE,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
      age INT,

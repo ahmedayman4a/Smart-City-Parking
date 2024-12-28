@@ -16,9 +16,9 @@ public class ParkingLot {
     private String address;
     private BigDecimal longitude;
     private BigDecimal latitude;
-    private int startPrice;
-    private int ratePerHour;
-    private int penalty;
+    private float startPrice;
+    private float ratePerHour;
+    private float penalty;
     private int totalSpaces;
     private int currentOccupancy;
     private ParkingLotType type;

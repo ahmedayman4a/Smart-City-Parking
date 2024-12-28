@@ -15,9 +15,9 @@ import java.math.BigDecimal;
 public class ParkingLotDTO {
     private String name;
     private String address;
-    private int startPrice;
-    private int ratePerHour;
-    private int penalty;
+    private float startPrice;
+    private float ratePerHour;
+    private float penalty;
     private int totalSpaces;
     private BigDecimal latitude;
     private BigDecimal longitude;

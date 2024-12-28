@@ -10,6 +10,7 @@ import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './components/auth/PrivateRoute';
 import ReservationHistoryPage from './pages/user/ReservationHistory';
 import ReservationDetails from './pages/user/ReservationDetails';
+import ManagerReservations from './pages/manager/Reservations';
 
 function App() {
   return (
@@ -39,6 +40,14 @@ function App() {
         />
 
         {/* Manager Routes */}
+        <Route
+          path="/manager/dashboard"
+          element={<PrivateRoute requiredRole="ParkingManager" redirectPath="/manager/dashboard"><ManagerDashboard /></PrivateRoute>}
+        />
+        <Route
+          path="/manager/reservations"
+          element={<PrivateRoute requiredRole="ParkingManager" redirectPath="/manager/reservations"><ManagerReservations /></PrivateRoute>}
+        />
         <Route
           path="/manager/*"
           element={<PrivateRoute requiredRole="ParkingManager" redirectPath="/manager/dashboard"><ManagerDashboard /></PrivateRoute>}

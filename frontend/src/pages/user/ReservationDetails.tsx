@@ -1,5 +1,5 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import React, {useEffect} from 'react';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import UserDashboardLayout from '../../components/dashboard/UserDashboardLayout';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -30,7 +30,20 @@ const mockReservation = {
 
 export default function ReservationDetails() {
   const { id } = useParams();
-  const reservation = mockReservation;
+  const { state } = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!state) {
+      navigate('/reservations');
+    }
+  }, [state, navigate]);
+
+  if (!state) {
+    return null; 
+  }
+
+  const reservation = state;
 
   return (
     <UserDashboardLayout>
@@ -54,12 +67,12 @@ export default function ReservationDetails() {
                   <div className="flex items-center space-x-3">
                     <Car className="h-6 w-6 text-blue-600" />
                     <div>
-                      <h2 className="text-xl font-semibold text-gray-900">{reservation.parkingLot}</h2>
+                      <h2 className="text-xl font-semibold text-gray-900">{reservation.lotName}</h2>
                       <p className="text-sm text-gray-500">Spot {reservation.spotId}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-2xl font-bold text-blue-600">${reservation.totalPrice.toFixed(2)}</p>
+                    <p className="text-2xl font-bold text-blue-600">${reservation.amount.toFixed(2)}</p>
                     <p className="text-sm text-gray-500">Total Price</p>
                   </div>
                 </div>
@@ -69,15 +82,16 @@ export default function ReservationDetails() {
                     <MapPin className="h-5 w-5 text-gray-400 mt-1" />
                     <div>
                       <p className="text-sm font-medium text-gray-900">Location</p>
-                      <p className="text-sm text-gray-500">{reservation.location}</p>
-                      <p className="text-sm text-gray-500">{reservation.floor}, {reservation.section}</p>
+                      <p className="text-sm text-gray-500">{reservation.lotAddress}</p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
                     <Timer className="h-5 w-5 text-gray-400 mt-1" />
                     <div>
                       <p className="text-sm font-medium text-gray-900">Duration</p>
-                      <p className="text-sm text-gray-500">2 Hours</p>
+                      {
+                        (new Date(reservation.end).getTime() - new Date(reservation.start).getTime()) / 1000 / 60 / 60 
+                      } Hours
                     </div>
                   </div>
                 </div>
@@ -88,7 +102,8 @@ export default function ReservationDetails() {
                     <div>
                       <p className="text-sm font-medium text-gray-900">Date</p>
                       <p className="text-sm text-gray-500">
-                        {new Date(reservation.startTime).toLocaleDateString()}
+                        {new Date(reservation.start).toLocaleDateString()} - &nbsp;
+                        {new Date(reservation.end).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
@@ -97,8 +112,8 @@ export default function ReservationDetails() {
                     <div>
                       <p className="text-sm font-medium text-gray-900">Time</p>
                       <p className="text-sm text-gray-500">
-                        {new Date(reservation.startTime).toLocaleTimeString()} - 
-                        {new Date(reservation.endTime).toLocaleTimeString()}
+                        {new Date(reservation.start).toLocaleTimeString()} - &nbsp; 
+                        {new Date(reservation.end).toLocaleTimeString()}
                       </p>
                     </div>
                   </div>
@@ -112,18 +127,18 @@ export default function ReservationDetails() {
             <div className="bg-white shadow-lg rounded-lg p-6 space-y-4">
               <h3 className="text-lg font-semibold text-gray-900">Location</h3>
               <div className="h-64 rounded-lg overflow-hidden">
-                <MapContainer center={reservation.coordinates} zoom={15} className="h-full w-full">
+                <MapContainer center={[reservation.latitude, reservation.longitude]} zoom={15} className="h-full w-full">
                   <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                   />
-                  <Marker position={reservation.coordinates}>
-                    <Popup>{reservation.location}</Popup>
+                  <Marker position={[reservation.latitude, reservation.longitude]}>
+                    <Popup>{reservation.lotAddress}</Popup>
                   </Marker>
                 </MapContainer>
               </div>
               <a
-                href={`https://www.google.com/maps/dir/?api=1&destination=${reservation.coordinates[0]},${reservation.coordinates[1]}`}
+                href={`https://www.google.com/maps/dir/?api=1&destination=${reservation.latitude},${reservation.longitude}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-200"

@@ -50,6 +50,18 @@
 			<version>1.18.36</version>
 			<scope>provided</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+			<version>6.20.5</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports-fonts</artifactId>
+			<version>6.20.5</version>
+		</dependency>
+
 		<!-- Spring Security Dependencies -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>

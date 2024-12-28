@@ -47,6 +47,31 @@ public class UserRepository {
 
     }
 
+    public User findById(int id) {
+        String sql = "SELECT * FROM User WHERE user_id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{id}, (rs, rowNum) -> {
+            return User.builder()
+                    .id(rs.getInt("user_id"))
+                    .username(rs.getString("username"))
+                    .password(rs.getString("password"))
+                    .email(rs.getString("email"))
+                    .role(Role.valueOf(rs.getString("role")))
+                    .phone(rs.getString("phone"))
+                    .age(rs.getInt("age"))
+                    .createdAt(rs.getTimestamp("created_at").toLocalDateTime())
+                    .dateOfBirth(rs.getDate("date_of_birth").toLocalDate())
+                    .status(Status.valueOf(rs.getString("status").toUpperCase())) // Ensure matching
+                    .firstName(rs.getString("first_name"))
+                    .lastName(rs.getString("last_name"))
+                    .build();
+        });
+    }
+
+    public User update(User user) {
+        String sql = "UPDATE User SET first_name = ?, last_name = ?, email = ?, phone = ?, username = ?, password = ?, role = ?, date_of_birth = ?, status = ?, age = ?, balance = ? WHERE user_id = ?";
+        jdbcTemplate.update(sql, user.getFirstName(), user.getLastName(), user.getEmail(), user.getPhone(), user.getUsername(), user.getPassword(), user.getRole().toString(), user.getDateOfBirth(), user.getStatus().toString(), user.getAge(), user.getBalance(), user.getId());
+        return user;
+    }
 
 
     public List<User> findAll() {
