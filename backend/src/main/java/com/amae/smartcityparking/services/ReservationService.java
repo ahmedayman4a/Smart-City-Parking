@@ -89,7 +89,7 @@ public class ReservationService {
     public double priceCalculator(Reservation reservation) {
         int lot_id = parkingSpotRepository.getParkingSpotById(reservation.getSpotId()).get().getLotId();
         ParkingLot parkingLot = parkingLotRepository.getParkingLotById(lot_id).get();
-        int pricePerHour = parkingLot.getStartPrice();
+        float pricePerHour = parkingLot.getStartPrice();
         double hours = (Duration.between(reservation.getStart(), reservation.getEnd()).toMinutes()) / 60.0;
 
         int peakStartHour = 8;
