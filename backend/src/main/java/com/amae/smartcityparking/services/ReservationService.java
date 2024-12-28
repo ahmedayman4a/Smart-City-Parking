@@ -1,7 +1,10 @@
 package com.amae.smartcityparking.services;
 
+import com.amae.smartcityparking.Entity.ParkingLot;
 import com.amae.smartcityparking.Entity.ParkingSpot;
 import com.amae.smartcityparking.Enum.Role;
+import com.amae.smartcityparking.Repository.ParkingLotRepository;
+import com.amae.smartcityparking.Repository.ParkingSpotRepository;
 import com.amae.smartcityparking.Service.ParkingSpotService;
 import com.amae.smartcityparking.dtos.requests.ReservationRequestDTO;
 import com.amae.smartcityparking.dtos.responses.ReservationResponseDTO;
@@ -24,9 +27,14 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final ParkingSpotService parkingSpotService;
-    public ReservationService(ReservationRepository reservationRepository, ParkingSpotService parkingSpotService) {
+    private final ParkingLotRepository parkingLotRepository;
+    private final ParkingSpotRepository parkingSpotRepository;
+
+    public ReservationService(ReservationRepository reservationRepository, ParkingSpotService parkingSpotService, ParkingLotRepository parkingLotRepository, ParkingSpotRepository parkingSpotRepository) {
         this.reservationRepository = reservationRepository;
         this.parkingSpotService = parkingSpotService;
+        this.parkingLotRepository = parkingLotRepository;
+        this.parkingSpotRepository = parkingSpotRepository;
     }
 
     public List<ReservationResponseDTO> getAll() {
@@ -76,9 +84,9 @@ public class ReservationService {
     }
 
     public double priceCalculator(Reservation reservation) {
-//        ParkingLot parkingLot = parkingLotRepository.findBySpotId(reservation.getSpotId());
-//        int pricePerHour = parkingLot.getPrice();
-        int pricePerHour = 10;
+        int lot_id = parkingSpotRepository.getParkingSpotById(reservation.getSpotId()).get().getLotId();
+        ParkingLot parkingLot = parkingLotRepository.getParkingLotById(lot_id).get();
+        int pricePerHour = parkingLot.getStartPrice();
         double hours = (Duration.between(reservation.getStart(), reservation.getEnd()).toMinutes()) / 60.0;
 
         int peakStartHour = 8;
