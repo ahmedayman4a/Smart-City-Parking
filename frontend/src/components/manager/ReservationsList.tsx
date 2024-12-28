@@ -1,4 +1,15 @@
 import React, { useState } from 'react';
+
+type Reservation = {
+  id: string;
+  spotId: string;
+  amount: number;
+  status: string;
+  lotName: string;
+  lotAddress: string;
+  start: string;
+  end: string;
+};
 import { Calendar, Clock, User, Search } from 'lucide-react';
 
 const mockReservations = [
@@ -20,7 +31,7 @@ const mockReservations = [
   }
 ];
 
-export default function ReservationsList() {
+export default function ReservationsList({reservations}: {reservations: Reservation[]}) {
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredReservations = mockReservations.filter(
@@ -32,7 +43,7 @@ export default function ReservationsList() {
       <div className="px-4 py-5 border-b border-gray-200">
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-medium text-gray-900">Reservations</h3>
-          <div className="relative w-64">
+          {/* <div className="relative w-64">
             <input
               type="text"
               placeholder="Search reservations..."
@@ -41,29 +52,30 @@ export default function ReservationsList() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
             <Search className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="divide-y divide-gray-200">
-        {filteredReservations.map((reservation) => (
+        {reservations.map((reservation) => (
           <div key={reservation.id} className="p-4 hover:bg-gray-50">
             <div className="flex justify-between items-center">
               <div className="flex flex-col">
                 <div className="flex items-center">
                   <User className="h-5 w-5 text-gray-400" />
                   <span className="ml-2 text-sm font-medium text-gray-900">
-                    {reservation.userName}
+                    {reservation.username}
                   </span>
                 </div>
                 <div className="mt-2 flex items-center text-sm text-gray-500">
                   <Calendar className="h-5 w-5 text-gray-400 mr-2" />
-                  <span>{new Date(reservation.startTime).toLocaleDateString()}</span>
+                  {new Date(reservation.start).toLocaleDateString()} - 
+                  {new Date(reservation.end).toLocaleDateString()}
                 </div>
                 <div className="mt-1 flex items-center text-sm text-gray-500">
                   <Clock className="h-5 w-5 text-gray-400 mr-2" />
                   <span>
-                    {new Date(reservation.startTime).toLocaleTimeString()} - 
-                    {new Date(reservation.endTime).toLocaleTimeString()}
+                    {new Date(reservation.start).toLocaleTimeString()} - 
+                    {new Date(reservation.end).toLocaleTimeString()}
                   </span>
                 </div>
               </div>

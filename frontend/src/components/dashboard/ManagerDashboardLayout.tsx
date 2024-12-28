@@ -86,6 +86,10 @@ export default function ManagerDashboardLayout({ children }: { children: React.R
           {/* Top navigation */}
           <div className="sticky top-0 z-10 flex-shrink-0 flex h-16 bg-white shadow">
             <div className="flex-1 px-4 flex justify-end">
+            <div className="flex-1 px-4 flex justify-center pt-4">
+              <h1 className="text-2xl font-semibold text-gray-900">Parking Manager Dashboard</h1>
+            </div>
+
               <div className="ml-4 flex items-center md:ml-6">
                 <button className="p-1 rounded-full text-gray-400 hover:text-gray-500">
                   <Bell className="h-6 w-6" />

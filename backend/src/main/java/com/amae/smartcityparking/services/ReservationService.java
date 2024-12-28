@@ -120,4 +120,21 @@ public class ReservationService {
 
         return reservationRepository.findByUserId(user.getId());
     }
+
+    public void cancelReservation(int id, User user) {
+        Reservation reservation = reservationRepository.findById(id);
+        if (reservation == null) {
+            throw new IllegalArgumentException("Reservation not found.");
+        }
+
+        if (reservation.getUserId() != user.getId()) {
+            throw new IllegalArgumentException("You are not authorized to cancel this reservation.");
+        }
+        if (reservation.getStatus().equals("CANCELLED")) {
+            throw new IllegalArgumentException("Reservation already cancelled.");
+        }
+
+        reservationRepository.updateStatus(id, "CANCELLED");
+    }
+
 }
