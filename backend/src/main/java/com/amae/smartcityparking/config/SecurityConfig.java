@@ -27,6 +27,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/authenticate/**") // list of request that should be permitted
                         .permitAll()
+                        .requestMatchers("/ws/**") // list of request that should be permitted
+                        .permitAll()
+                        .requestMatchers("/app/**") // list of request that should be permitted
+                        .permitAll()
                         .anyRequest() // any other request should be authenticated
                         .authenticated()
                 )

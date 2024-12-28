@@ -9,11 +9,15 @@ import com.amae.smartcityparking.Entity.ParkingManager;
 import com.amae.smartcityparking.Entity.User;
 import com.amae.smartcityparking.Enum.Role;
 import com.amae.smartcityparking.Enum.Status;
+import com.amae.smartcityparking.Event.DriverSignupEvent;
+import com.amae.smartcityparking.Event.ParkingManagerSignupEvent;
 import com.amae.smartcityparking.Repository.DriverRepository;
 import com.amae.smartcityparking.Repository.ParkingManagerRepository;
 import com.amae.smartcityparking.Repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,6 +38,8 @@ public class SignUpService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final ParkingManagerRepository parkingManagerRepository;
+
+    private final ApplicationEventPublisher eventPublisher;
 
     public ResponseEntity<Object> driverSignUp(UserDTO userDTO) {
         try {
@@ -100,6 +106,10 @@ public class SignUpService {
                 .status(Status.ACTIVE)
                 .build();
         driverRepository.saveDriver(driver);
+
+        eventPublisher.publishEvent(new DriverSignupEvent(this, driver));
+
+
 //        Map<String,Object> extractClaims = Map.of(
 //                "username", userDTO.getUsername(),
 //                "role", "DRIVER",
@@ -126,6 +136,8 @@ public class SignUpService {
                 .status(Status.ACTIVE)
                 .build();
         parkingManagerRepository.save(manager);
+
+        eventPublisher.publishEvent(new ParkingManagerSignupEvent(this, manager));
 //        Map<String,Object> extractClaims = Map.of(
 //                "username", userDTO.getUsername(),
 //                "role", "PARKING_MANAGER",
