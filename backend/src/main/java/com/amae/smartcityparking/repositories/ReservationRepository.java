@@ -120,7 +120,7 @@ public class ReservationRepository {
 
     public List<ReservationResponseDTO> findByManagerId(int managerId) {
         String sql = """
-                SELECT r.*, l.name AS lot_name, l.address AS lot_address, l.longitude, l.latitude s.spot_number AS spot_number, u.first_name, u.last_name
+                SELECT r.*, l.name AS lot_name, l.address AS lot_address, l.longitude, l.latitude, s.spot_number AS spot_number, u.first_name, u.last_name
                 FROM reservation r
                 INNER JOIN parking_spot s ON r.spot_id = s.id
                 INNER JOIN parking_lot l ON s.parking_lot_id = l.id
