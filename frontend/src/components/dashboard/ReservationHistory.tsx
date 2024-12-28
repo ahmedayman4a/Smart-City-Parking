@@ -42,8 +42,8 @@ export default function ReservationHistory({ reservations }: ReservationHistoryP
   console.log('reservations', reservations);
   const navigate = useNavigate();
 
-  const handleReservationClick = (reservationId: string) => {
-    navigate(`/reservation-details/${reservationId}`);
+  const handleReservationClick = (reservation: Reservation) => {
+    navigate(`/reservation-details/${reservation.id}`, { state: reservation });
   };
 
   return (
@@ -57,8 +57,8 @@ export default function ReservationHistory({ reservations }: ReservationHistoryP
           <div 
             key={reservation.id} 
             className="p-4 hover:bg-gray-50 cursor-pointer transition-colors duration-200"
-            onClick={() => handleReservationClick(reservation.id)}
-          >
+            onClick={() => handleReservationClick(reservation)}
+            >
             <div className="flex justify-between items-start">
               <div className="flex flex-col">
           <div className="flex items-center">
