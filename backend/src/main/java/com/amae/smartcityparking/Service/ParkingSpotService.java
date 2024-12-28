@@ -2,9 +2,11 @@ package com.amae.smartcityparking.Service;
 
 import com.amae.smartcityparking.DTO.ParkingLotDTO;
 import com.amae.smartcityparking.DTO.ParkingSpotDTO;
+import com.amae.smartcityparking.DTO.SensorStatusUpdateRequest;
 import com.amae.smartcityparking.Entity.ParkingLot;
 import com.amae.smartcityparking.Entity.ParkingSpot;
 import com.amae.smartcityparking.Entity.User;
+import com.amae.smartcityparking.Enum.ParkingSpotStatus;
 import com.amae.smartcityparking.Repository.ParkingLotRepository;
 import com.amae.smartcityparking.Repository.ParkingSpotRepository;
 import org.springframework.http.ResponseEntity;
@@ -77,6 +79,21 @@ public class ParkingSpotService {
             ParkingSpot updatedParkingSpot = createEntityObject(dto, userId);
             updatedParkingSpot.setId(id);
             if (parkingSpot.isPresent()) {
+                updatedParkingSpot = parkingSpotRepository.update(updatedParkingSpot);
+                return ResponseEntity.ok(updatedParkingSpot);
+            }
+            return ResponseEntity.badRequest().body("Parking Spot not found");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Parking lot not found");
+        }
+    }
+    public ResponseEntity<Object> updateParkingSpotStatus(ParkingSpotStatus status, int id) {
+        try {
+            Optional<ParkingSpot> parkingSpot = parkingSpotRepository.getParkingSpotById(id);
+            if (parkingSpot.isPresent()) {
+                ParkingSpot updatedParkingSpot = parkingSpot.get();
+                updatedParkingSpot.setStatus(status);
                 updatedParkingSpot = parkingSpotRepository.update(updatedParkingSpot);
                 return ResponseEntity.ok(updatedParkingSpot);
             }
