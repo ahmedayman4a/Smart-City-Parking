@@ -1,7 +1,7 @@
-package com.amae.smartcityparking.repositories;
+package com.amae.smartcityparking.Repository;
 
-import com.amae.smartcityparking.dtos.responses.ReservationResponseDTO;
-import com.amae.smartcityparking.models.Reservation;
+import com.amae.smartcityparking.DTO.ReservationResponseDTO;
+import com.amae.smartcityparking.Entity.Reservation;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 

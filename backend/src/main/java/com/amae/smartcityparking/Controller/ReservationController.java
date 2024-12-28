@@ -1,17 +1,16 @@
-package com.amae.smartcityparking.controllers;
+package com.amae.smartcityparking.Controller;
 
 import com.amae.smartcityparking.Entity.User;
-import com.amae.smartcityparking.dtos.requests.ReservationRequestDTO;
-import com.amae.smartcityparking.dtos.responses.ReservationResponseDTO;
-import com.amae.smartcityparking.models.Reservation;
-import com.amae.smartcityparking.services.ReservationService;
+import com.amae.smartcityparking.DTO.ReservationRequestDTO;
+import com.amae.smartcityparking.DTO.ReservationResponseDTO;
+import com.amae.smartcityparking.Entity.Reservation;
+import com.amae.smartcityparking.Service.ReservationService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController

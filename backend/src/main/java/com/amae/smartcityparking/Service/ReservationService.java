@@ -1,4 +1,4 @@
-package com.amae.smartcityparking.services;
+package com.amae.smartcityparking.Service;
 
 import com.amae.smartcityparking.Entity.ParkingLot;
 import com.amae.smartcityparking.Entity.ParkingSpot;
@@ -6,14 +6,13 @@ import com.amae.smartcityparking.Enum.Role;
 import com.amae.smartcityparking.Repository.ParkingLotRepository;
 import com.amae.smartcityparking.Repository.ParkingSpotRepository;
 import com.amae.smartcityparking.Repository.UserRepository;
-import com.amae.smartcityparking.Service.ParkingSpotService;
-import com.amae.smartcityparking.dtos.requests.ReservationRequestDTO;
-import com.amae.smartcityparking.dtos.responses.ReservationResponseDTO;
+import com.amae.smartcityparking.DTO.ReservationRequestDTO;
+import com.amae.smartcityparking.DTO.ReservationResponseDTO;
 import com.amae.smartcityparking.exception.NoAvailableSpotsException;
 import com.amae.smartcityparking.exception.SpotNotAvailableException;
-import com.amae.smartcityparking.models.Reservation;
+import com.amae.smartcityparking.Entity.Reservation;
 import com.amae.smartcityparking.Entity.User;
-import com.amae.smartcityparking.repositories.ReservationRepository;
+import com.amae.smartcityparking.Repository.ReservationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

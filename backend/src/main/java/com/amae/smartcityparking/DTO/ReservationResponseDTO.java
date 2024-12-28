@@ -1,6 +1,6 @@
-package com.amae.smartcityparking.dtos.responses;
+package com.amae.smartcityparking.DTO;
 
-import com.amae.smartcityparking.models.Reservation;
+import com.amae.smartcityparking.Entity.Reservation;
 import lombok.Builder;
 import lombok.Data;
 

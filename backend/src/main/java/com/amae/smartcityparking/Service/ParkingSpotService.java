@@ -1,15 +1,12 @@
 package com.amae.smartcityparking.Service;
 
-import com.amae.smartcityparking.DTO.ParkingLotDTO;
 import com.amae.smartcityparking.DTO.ParkingSpotDTO;
-import com.amae.smartcityparking.DTO.SensorStatusUpdateRequest;
 import com.amae.smartcityparking.Entity.ParkingLot;
 import com.amae.smartcityparking.Entity.ParkingSpot;
 import com.amae.smartcityparking.Entity.User;
 import com.amae.smartcityparking.Enum.ParkingSpotStatus;
 import com.amae.smartcityparking.Repository.ParkingLotRepository;
 import com.amae.smartcityparking.Repository.ParkingSpotRepository;
-import com.amae.smartcityparking.services.ReservationService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;

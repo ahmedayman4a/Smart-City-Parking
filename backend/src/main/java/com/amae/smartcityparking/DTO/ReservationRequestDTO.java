@@ -1,4 +1,4 @@
-package com.amae.smartcityparking.dtos.requests;
+package com.amae.smartcityparking.DTO;
 
 import lombok.Data;
 
