@@ -1,4 +1,5 @@
-package com.amae.smartcityparking.Config;
+package com.amae.smartcityparking.config;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

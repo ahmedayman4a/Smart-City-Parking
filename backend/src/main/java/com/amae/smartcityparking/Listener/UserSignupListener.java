@@ -25,7 +25,7 @@ public class UserSignupListener {
     @EventListener
     public void handleParkingManagerSignupEvent(ParkingManagerSignupEvent parkingManagerSignupEvent) {
 
-        notificationService.sendToUser("ebrahimalaa26", "Parking Manager " + parkingManagerSignupEvent.getParkingManager().getUsername() + " has signed up");
+        notificationService.sendToUser(1, "Parking Manager " + parkingManagerSignupEvent.getParkingManager().getUsername() + " has signed up");
 
     }
 

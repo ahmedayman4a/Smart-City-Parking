@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import Cookies from 'js-cookie';
+import { Console } from 'console';
 
 interface User {
   id: string;
@@ -46,13 +47,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           logout();
           return;
         }
+        
+      const notification = Cookies.get('notifications');
+      console.log("notification from cookies2222");
+      console.log("notification from cookies", notification);
+
+       
 
         const user: User = {
-          id: decodedToken.sub || decodedToken.userId,
+          id: decodedToken.userId || decodedToken.sub,
           name: decodedToken.name || decodedToken.aud,
           email: decodedToken.email,
           role: decodedToken.role,
         };
+
+        console.log("user from token", user);
         setUser(user);
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       } catch (error) {
@@ -71,17 +80,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setError('');
       console.log('Logging in...');
+      console.log('email:', email);
+      console.log('password', password);
       const response = await axios.post('http://localhost:8080/api/authenticate/login', { email, password });
 
       const token = response.data.data;
       const decodedToken: any = jwtDecode(token);
+      const notifications = response.data.notifications;
+      console.log("notifications", notifications);
+      Cookies.set('notifications', JSON.stringify(notifications), { expires: 7 });
+
+      const notification = Cookies.get('notifications');
+      console.log("notification from cookies2222");
+      console.log("notification from cookies", notification);
+      
 
       const user: User = {
-        id: decodedToken.sub || decodedToken.userId,
-        name: decodedToken.name || decodedToken.aud,
+        id: decodedToken.userId,
+        name: decodedToken.username,
         email: decodedToken.email,
         role: decodedToken.role,
       };
+
+      console.log("user from login", user);
+      console.log("token from login", decodedToken);
 
       Cookies.set('authToken', token, { expires: 7 });
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;

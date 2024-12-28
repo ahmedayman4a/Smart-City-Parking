@@ -44,7 +44,6 @@ public class UserRepository {
             return ps;
         }, keyHolder);
         // Get the generated user_id
-        Integer userId = keyHolder.getKey().intValue();
 
     }
 

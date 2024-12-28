@@ -5,7 +5,7 @@ import { Notification } from '../components/Notification';
 
 interface NotificationPanelProps {
   notifications: Notification[];
-  onMarkAsRead: (id: string) => void;
+  onMarkAsRead: (id: number) => void;  // Changed from string to number
   onClear: () => void;
 }
 
@@ -35,13 +35,13 @@ export function NotificationPanel({ notifications, onMarkAsRead, onClear }: Noti
         <div className="space-y-3">
           {notifications.map((notification) => (
             <div
-              key={notification.id}
+              key={`${notification.id}-${notification.createdAt}`}
               className={`p-3 rounded-lg ${
                 notification.read ? 'bg-gray-50' : 'bg-blue-50'
               }`}
             >
               <div className="flex justify-between items-start">
-                <p className="text-sm text-gray-800">{notification.message}</p>
+                <p className="text-sm text-gray-800">{notification.content}</p> 
                 {!notification.read && (
                   <button
                     onClick={() => onMarkAsRead(notification.id)}
@@ -53,7 +53,7 @@ export function NotificationPanel({ notifications, onMarkAsRead, onClear }: Noti
                 )}
               </div>
               <p className="text-xs text-gray-500 mt-1">
-                {notification.timestamp.toLocaleTimeString()}
+                {new Date(notification.createdAt).toLocaleTimeString()}
               </p>
             </div>
           ))}

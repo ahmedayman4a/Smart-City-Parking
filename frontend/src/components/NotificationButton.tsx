@@ -26,11 +26,8 @@ export function NotificationButton() {
         <div className="absolute right-0 mt-2 z-50">
           <NotificationPanel
             notifications={notifications}
-            onMarkAsRead={markAsRead}
+            onMarkAsRead={(id) => markAsRead(id)}
             onClear={clearNotifications}
-            // notifications={[]}
-            // onMarkAsRead= {() => {}}
-            // onClear= {() => {}}
           />
         </div>
       )}
