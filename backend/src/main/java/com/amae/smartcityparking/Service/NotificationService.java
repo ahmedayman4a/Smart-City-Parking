@@ -29,4 +29,18 @@ public class NotificationService {
         // This will send to all subscribers of /topic/notification
         messagingTemplate.convertAndSend("/topic/notification", message);
     }
+    public void sendToUser(String username, String message) {
+        // Construct the destination manually to match the client's subscription
+        String destination = "/queue/notification/" + username;
+
+        // Log for debugging
+        System.out.println("Sending message to destination: " + destination);
+        System.out.println("Message content: " + message);
+
+        // Send the message to the specific destination
+        messagingTemplate.convertAndSend(destination, message);
+
+        System.out.println("Message sent to user: " + username);
+    }
+
 }

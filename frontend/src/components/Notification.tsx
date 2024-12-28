@@ -1,5 +1,11 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Client, IFrame } from '@stomp/stompjs';
+import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
+import React, { createContext, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
 
 // If your server is listening on ws://localhost:8080/ws, use that URL:
 const SOCKET_URL = 'ws://localhost:8080/ws';
@@ -16,16 +22,29 @@ export function useNotifications() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [connected, setConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  //take token from cookie
+  const token = Cookies.get('authToken');
+  //get username from token
+
+  const decodedToken: any = jwtDecode(token);
+  const username = decodedToken.username;
+  console.log("username", username);
+
 
   const initializeWebSocket = useCallback(() => {
     // 1) Create a new STOMP client with a raw WebSocket broker URL
     const client = new Client({
-      brokerURL: SOCKET_URL,      // <--- Raw WebSocket URL
+      brokerURL: `ws://localhost:8080/ws?username=${encodeURIComponent(username)}`,      // <--- Raw WebSocket URL
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
       debug: (str) => {
         console.log('STOMP:', str);
+      },
+      connectHeaders: {
+        Authorization: `Bearer ${token}`, // Include token for authentication
+        username, // Send username to the server
       },
     });
 
@@ -33,9 +52,11 @@ export function useNotifications() {
       console.log('Connected to WebSocket broker:', frame);
       setConnected(true);
       setError(null);
-
       // 2) Subscribe to the topic
-      client.subscribe('/topic/notification', (message) => {
+      // /user/ebrahimalaa26/queue/notification
+      
+      // client.subscribe(`/user/${username}/queue/notification`, (message) => 
+      client.subscribe(`/queue/notification/${username}`, (message) => {
         try {
           const notification: Notification = {
             id: crypto.randomUUID(),
@@ -44,7 +65,9 @@ export function useNotifications() {
             read: false,
             type: 'info',
           };
+          console.log("notification", notification);
           setNotifications((prev) => [notification, ...prev]);
+
         } catch (err) {
           console.error('Error processing message:', err);
           setError('Failed to process notification');

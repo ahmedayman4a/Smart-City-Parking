@@ -1,21 +1,32 @@
 package com.amae.smartcityparking.Controller;
 
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Controller;
 
 @Controller
+@RequiredArgsConstructor
 public class NotificationController {
+
+    //client application
+    private final SimpMessageSendingOperations messagingTemplate;
 
 
     //server application
-    @MessageMapping("/sendNotification") // the endpoint from the client is /app/sendNotification
-    @SendTo("/topic/notification") // the endpoint to the client is /topic/notification
-    public String sendNotification(String message) {
-        System.out.println("Notification sent"+message);
-        return "Notification sent"+message; // Dummy implementation
+    @MessageMapping("/sendNotification")
+    public void handleSendNotification(String message, SimpMessageHeaderAccessor headerAccessor) {
+
+        String username = (String) headerAccessor.getSessionAttributes().get("username");
+        if (username != null) {
+            System.out.println("Username in session: " + username);
+            messagingTemplate.convertAndSendToUser(username, "/queue/notification", message);
+        } else {
+            System.out.println("No username in session attributes.");
+        }
+
     }
-
-
 }
