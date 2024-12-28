@@ -6,7 +6,6 @@ import Dropdown from "../Dropdown";
 import MapSelector from "../MapSelector";
 import apiClient from "../../../api/apiClient";
 import { useAuth } from "../../../context/AuthContext";
-import { log } from "console";
 
 export default function ParkingFacilityForm({ managerData }: any) {
   const [formData, setFormData] = useState({

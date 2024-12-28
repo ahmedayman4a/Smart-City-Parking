@@ -4,12 +4,14 @@ import com.amae.smartcityparking.Entity.ParkingLot;
 import com.amae.smartcityparking.Entity.ParkingSpot;
 import com.amae.smartcityparking.Enum.ParkingLotType;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -84,5 +86,36 @@ public class ParkingLotRepository {
             return stmt;
         });
         return parkingLot;
+    }
+
+
+    public List<ParkingLot> searchByAddress(String addressFragment) {
+        String sql;
+        String searchPattern = null;
+        if (addressFragment == null || addressFragment.isEmpty()) {
+            sql = "SELECT * FROM parking_lot";
+            return jdbcTemplate.query(sql, parkingLotRowMapper());
+        }
+        else {
+            sql = "SELECT * FROM parking_lot WHERE address LIKE ?";
+            searchPattern = "%" + addressFragment + "%";
+            return jdbcTemplate.query(sql, new Object[]{searchPattern}, parkingLotRowMapper());
+        }
+    }
+
+    private RowMapper<ParkingLot> parkingLotRowMapper() {
+        return (rs, rowNum) -> ParkingLot.builder()
+                .id(rs.getInt("id"))
+                .ownerId(rs.getInt("owner_id"))
+                .name(rs.getString("name"))
+                .address(rs.getString("address"))
+                .longitude(rs.getBigDecimal("longitude"))
+                .latitude(rs.getBigDecimal("latitude"))
+                .startPrice(rs.getInt("start_price"))
+                .ratePerHour(rs.getInt("rate_per_hour"))
+                .penalty(rs.getInt("penalty"))
+                .totalSpaces(rs.getInt("total_spaces"))
+                .type(ParkingLotType.fromString(rs.getString("type")))
+                .build();
     }
 }
