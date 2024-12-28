@@ -14,6 +14,7 @@ import com.amae.smartcityparking.Entity.Reservation;
 import com.amae.smartcityparking.Entity.User;
 import com.amae.smartcityparking.Repository.ReservationRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -44,7 +45,7 @@ public class ReservationService {
     }
 
 
-    @Transactional
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Reservation reserveSpot(ReservationRequestDTO requestDTO, User user) {
         // Fetch available spots
         List<ParkingSpot> availableSpots = parkingSpotService.getAvailableSpots(
