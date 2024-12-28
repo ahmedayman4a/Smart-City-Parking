@@ -102,7 +102,7 @@ export default function ParkingFinder() {
                   </div>
                   <input
                     type="text"
-                    className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md"
+                    className="focus:ring-blue-500 focus:border-blue-500 block w-full h-10 pl-10 sm:text-sm border-gray-300 rounded-md"
                     placeholder="Search by address"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
