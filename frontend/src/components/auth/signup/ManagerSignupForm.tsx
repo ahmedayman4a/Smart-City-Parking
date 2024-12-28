@@ -3,6 +3,7 @@ import axios from "axios";
 import BaseSignupFields from "./BaseSignupFields";
 import AuthButton from "../AuthButton";
 import type { ManagerDTO } from "../../../types/auth";
+import Cookies from "js-cookie";
 
 const API_URL = "http://localhost:8080";
 
@@ -66,8 +67,10 @@ export default function ManagerSignupForm({
         }
       );
 
+      console.log("Signup response:", response);
       if (response.status >= 200 && response.status < 300) {
         onSubmit(managerData);
+        Cookies.set("authToken", response.data.data, { expires: 7 });
         return;
       }
 

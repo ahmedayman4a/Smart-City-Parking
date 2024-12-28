@@ -1,46 +1,57 @@
-import React, { useState } from 'react';
-import { Building2, MapPin, DollarSign, Car } from 'lucide-react';
-import InputField from '../InputField';
-import AuthButton from '../AuthButton';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { Building2, MapPin, DollarSign, Car } from "lucide-react";
+import InputField from "../InputField";
+import AuthButton from "../AuthButton";
+import Dropdown from "../Dropdown";
+import MapSelector from "../MapSelector";
+import apiClient from "../../../api/apiClient";
+import { useAuth } from "../../../context/AuthContext";
 
-interface ParkingFacilityFormProps {
-  managerId: string;
-}
-
-export default function ParkingFacilityForm({ managerId }: ParkingFacilityFormProps) {
-  const navigate = useNavigate();
+export default function ParkingFacilityForm({ managerData }: any) {
   const [formData, setFormData] = useState({
-    parkName: '',
-    totalSlots: '',
-    address: '',
-    ratePerHour: '',
-    penalty: '',
-    startPrice: ''
+    name: "",
+    totalSpaces: "",
+    address: "",
+    ratePerHour: "",
+    penalty: "",
+    startPrice: "",
+    type: "",
+    longitude: 0,
+    latitude: 0,
   });
+  const { login } = useAuth();
+  const [parkingLotType, setParkingLotType] = useState<string>("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock API call to create parking facility
-    console.log('Creating parking facility:', {
-      ...formData,
-      managerId
-    });
-    
-    // Mock credentials for testing
-    const mockCredentials = {
-      email: 'manager@parkwise.com',
-      password: 'manager123'
-    };
-    
-    alert(`Facility registered successfully!\n\nLogin credentials:\nEmail: ${mockCredentials.email}\nPassword: ${mockCredentials.password}`);
-    navigate('/login');
+    try {
+      await apiClient.post("/parkingLot/create", formData);
+      login(managerData.email, managerData.password);
+    } catch (error) {
+      console.error("Error creating parking facility:", error);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleDropdownChange = (value: string) => {
+    setParkingLotType(value);
+    setFormData({
+      ...formData,
+      type: value.toUpperCase(),
+    });
+  };
+
+  const handleLocationSelect = (lat: number, lng: number) => {
+    setFormData({
+      ...formData,
+      longitude: lng,
+      latitude: lat,
     });
   };
 
@@ -48,9 +59,9 @@ export default function ParkingFacilityForm({ managerId }: ParkingFacilityFormPr
     <form onSubmit={handleSubmit} className="space-y-6">
       <InputField
         label="Parking Facility Name"
-        name="parkName"
+        name="name"
         type="text"
-        value={formData.parkName}
+        value={formData.name}
         onChange={handleChange}
         icon={<Building2 className="h-5 w-5 text-gray-400" />}
         placeholder="Downtown Parking"
@@ -59,13 +70,20 @@ export default function ParkingFacilityForm({ managerId }: ParkingFacilityFormPr
 
       <InputField
         label="Total Parking Slots"
-        name="totalSlots"
+        name="totalSpaces"
         type="number"
-        value={formData.totalSlots}
+        value={formData.totalSpaces}
         onChange={handleChange}
         icon={<Car className="h-5 w-5 text-gray-400" />}
         placeholder="100"
         required
+      />
+
+      <Dropdown
+        label="Parking Type"
+        options={["Standard", "Handicap", "Electric"]}
+        value={parkingLotType}
+        onChange={(value: string) => handleDropdownChange(value)}
       />
 
       <InputField
@@ -81,7 +99,7 @@ export default function ParkingFacilityForm({ managerId }: ParkingFacilityFormPr
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
         <InputField
-          label="Rate per Hour ($)"
+          label="Rate per Hr ($)"
           name="ratePerHour"
           type="number"
           value={formData.ratePerHour}
@@ -113,7 +131,7 @@ export default function ParkingFacilityForm({ managerId }: ParkingFacilityFormPr
           required
         />
       </div>
-
+      <MapSelector onLocationSelect={handleLocationSelect} />
       <AuthButton type="submit" text="Register Facility" />
     </form>
   );

@@ -32,9 +32,9 @@ public class ParkingLotRepository {
             stmt.setString(3, parkingLot.getAddress());
             stmt.setBigDecimal(4, new BigDecimal(parkingLot.getLongitude().toString()));
             stmt.setBigDecimal(5, new BigDecimal(parkingLot.getLatitude().toString()));
-            stmt.setInt(6, parkingLot.getStartPrice());
-            stmt.setInt(7, parkingLot.getRatePerHour());
-            stmt.setInt(8, parkingLot.getPenalty());
+            stmt.setBigDecimal(6, BigDecimal.valueOf(parkingLot.getStartPrice()));
+            stmt.setBigDecimal(7, BigDecimal.valueOf(parkingLot.getRatePerHour()));
+            stmt.setBigDecimal(8, BigDecimal.valueOf(parkingLot.getPenalty()));
             stmt.setInt(9, parkingLot.getTotalSpaces());
             stmt.setString(10, parkingLot.getType().name().toUpperCase());
             return stmt;
@@ -75,9 +75,9 @@ public class ParkingLotRepository {
             stmt.setString(2, parkingLot.getAddress());
             stmt.setBigDecimal(3, new BigDecimal(parkingLot.getLongitude().toString()));
             stmt.setBigDecimal(4, new BigDecimal(parkingLot.getLatitude().toString()));
-            stmt.setInt(5, parkingLot.getStartPrice());
-            stmt.setInt(6, parkingLot.getRatePerHour());
-            stmt.setInt(7, parkingLot.getPenalty());
+            stmt.setBigDecimal(5, BigDecimal.valueOf(parkingLot.getStartPrice()));
+            stmt.setBigDecimal(6, BigDecimal.valueOf(parkingLot.getRatePerHour()));
+            stmt.setBigDecimal(7, BigDecimal.valueOf(parkingLot.getPenalty()));
             stmt.setInt(8, parkingLot.getTotalSpaces());
             stmt.setString(9, parkingLot.getType().name().toUpperCase());
             stmt.setInt(10, parkingLot.getId());

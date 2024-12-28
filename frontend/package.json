@@ -12,6 +12,9 @@
     "start": "npm run dev"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^6.3.0",
     "@react-oauth/google": "^0.12.1",
     "axios": "^1.7.9",
     "js-cookie": "^3.0.5",
