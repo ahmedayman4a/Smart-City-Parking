@@ -32,8 +32,7 @@ const MapAutoBounds = ({ spots }: { spots: ParkingSpot[] }) => {
 };
 
 const getIcon = (type: string) => {
-  // Map spot types to their respective icons
-  const iconMap = {
+  const iconMap: Record<string, string> = {
     standard: regularSrc,
     electric: evSrc,
     handicap: handSrc,
@@ -42,7 +41,7 @@ const getIcon = (type: string) => {
   const iconUrl = iconMap[type.toLowerCase()] || regularSrc; // Default to car icon if type not found
   return L.icon({
     iconUrl,
-    iconSize: [32, 32], // Customize size as needed
+    iconSize: [30, 30], // Customize size as needed
     iconAnchor: [16, 32], // Adjust anchor point if necessary
     popupAnchor: [0, -32], // Adjust popup position relative to the icon
   });
