@@ -69,7 +69,7 @@ public class SignUpController {
             System.out.println("Received notification IDs to clear: " + notificationIds);
 
             // Perform the deletion
-            notificationRepository.deleteAllById(notificationIds);
+            notificationRepository.updateStatus(notificationIds);
 
             // Respond with success
             return ResponseEntity.ok("Notifications cleared successfully.");

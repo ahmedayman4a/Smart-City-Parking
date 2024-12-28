@@ -2,7 +2,6 @@ package com.amae.smartcityparking.Controller;
 
 
 import com.amae.smartcityparking.Repository.NotificationRepository;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +24,7 @@ public class ManageNotificationController {
             System.out.println("Received notification IDs to clear: " + notificationIds);
 
             // Perform the deletion
-            notificationRepository.deleteAllById(notificationIds);
+            notificationRepository.updateStatus(notificationIds);
 
             // Respond with success
             return ResponseEntity.ok("Notifications cleared successfully.");

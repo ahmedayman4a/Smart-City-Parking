@@ -2,7 +2,6 @@ package com.amae.smartcityparking.Repository;
 
 import com.amae.smartcityparking.Entity.Notification;
 import com.amae.smartcityparking.Enum.NotificationStatus;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -43,7 +42,7 @@ public class NotificationRepository {
                 .build());
     }
 
-    public void deleteAllById(List<Long> notificationIds) {
+    public void updateStatus(List<Long> notificationIds) {
         String sql = "UPDATE notification SET status = ? WHERE id = ?";
         for (Long id : notificationIds) {
             int idInt = id.intValue();
