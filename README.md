@@ -57,6 +57,50 @@ smart-city-parking/
 - **IoT Simulation:** Python
 
 
+---
+
+## Screenshots
+
+### Admin Dashboards
+
+- **Admin Revenue Dashboard**
+  ![Admin Revenue Dashboard](./docs/images/admin_revenue_dashboard.png)
+
+- **Admin Signup for Parking Lot**
+  ![Admin Signup](./docs/images/admin_signup_parking_lot.png)
+
+---
+
+### Parking Manager Views
+
+- **Dashboard**
+  ![Parking Manager Dashboard](./docs/images/parking_manager_dashboard.png)
+
+- **Reservation View**
+  ![Reservation View](./docs/images/parking_manager_reservation_view.png)
+
+---
+
+### Driver/User Views
+
+- **User Login**
+  ![User Login](./docs/images/userLogin.png)
+
+- **Navigation to Parking Lot**
+  ![Navigation](./docs/images/navigation_to_parkin_lot.png)
+
+- **Parking Lot Map View**
+  ![Map View](./docs/images/parking_lot_map_view.png)
+
+- **Parking Lot List View**
+  ![List View](./docs/images/parking_lot_list_view.png)
+
+- **Reservation List**
+  ![Reservation List](./docs/images/Reservation_list.png)
+
+---
+
+
 
 ## Git Workflow and Conventions
 
